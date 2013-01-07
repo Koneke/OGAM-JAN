@@ -3,9 +3,7 @@ package lh.koneke.games.lwjglplatformer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import lh.koneke.thomas.framework.Game;
@@ -22,6 +20,8 @@ import lh.koneke.thomas.graphics.SpriteSheet;
 import lh.koneke.thomas.graphics.Texture2d;
 import lh.koneke.thomas.gui.Button;
 import lh.koneke.thomas.gui.ContextMenu;
+import lh.koneke.thomas.gui.Font;
+import lh.koneke.thomas.gui.Text;
 
 public class LWJGLPlatformer extends Game {
 	public static void main(String[] args) { LWJGLPlatformer game = new LWJGLPlatformer(); game.start(); }
@@ -66,10 +66,10 @@ public class LWJGLPlatformer extends Game {
 	int hotswapFrequency = 1000; //time in ms for hotswap updating
 	int hotswapTimer = 0;
 	
+	Font f;
 	SpriteSheet font;
-	int fontWidth = 5; //size of letter
-	int fontMargin = 1;//margin between letters
-	Map<Character, Integer> fontCharacterWidth = new HashMap<Character, Integer>(); //characters of nonstandard width and their width
+
+	Text text = new Text("Test");
 	
 	public void sysInit() {
 		screenSize = new Vector2f(320, 256);
@@ -78,69 +78,43 @@ public class LWJGLPlatformer extends Game {
 		random = new Random();
 	}
 	
-	public List<DrawQuadCall> renderString(String string, Vector2f position) {
-		List<DrawQuadCall> calls = new ArrayList<DrawQuadCall>();
-		
-		int w = 0;
-		for(char c : string.toCharArray()) {
-			if(c == ' ') {
-				w += 4;
-				continue;
-			}
-			
-			char cc = (char)((c-65)*2);
-			//A = 0, B = 2, a = 1, b = 3
-			if(c >= 97) cc = (char)((c-97)*2+1);
-			
-			Vector2f charPosition = new Vector2f(cc*(fontWidth+fontMargin)+fontMargin, 0);
-			Vector2f charSize = new Vector2f(
-				(fontCharacterWidth.containsKey(c) ? fontCharacterWidth.get(c) : fontWidth), 13);
-			
-			calls.add(new DrawQuadCall(
-				font,
-				font.getAt(
-					charPosition,
-					charSize),
-				new Quad(new Rectangle(position.add(new Vector2f(w,0)), charSize)),
-				scale,
-				-10));
-			
-			w+=charSize.x+1;
-		}
-		return calls;
-	}
-	
 	public void initialize() {
 		sysInit();
 		
 		font = new SpriteSheet(null, new Vector2f(0,0));
-
-		fontCharacterWidth.put('a', 4);
-		fontCharacterWidth.put('g', 4);
-		fontCharacterWidth.put('h', 4);
-		fontCharacterWidth.put('I', 3);
-		fontCharacterWidth.put('i', 1);
-		fontCharacterWidth.put('J', 4);
-		fontCharacterWidth.put('j', 3);
-		fontCharacterWidth.put('K', 4);
-		fontCharacterWidth.put('k', 3);
-		fontCharacterWidth.put('l', 1);
-		fontCharacterWidth.put('n', 4);
-		fontCharacterWidth.put('o', 4);
-		fontCharacterWidth.put('P', 4);
-		fontCharacterWidth.put('p', 4);
-		fontCharacterWidth.put('q', 4);
-		fontCharacterWidth.put('R', 4);
-		fontCharacterWidth.put('r', 2);
-		fontCharacterWidth.put('s', 3);
-		fontCharacterWidth.put('t', 3);
-		fontCharacterWidth.put('u', 4);
-		fontCharacterWidth.put('v', 3);
-		fontCharacterWidth.put('X', 3);
-		fontCharacterWidth.put('x', 3);
-		fontCharacterWidth.put('Y', 4);
-		fontCharacterWidth.put('y', 4);
-		fontCharacterWidth.put('z', 3);
+		
+		f = new Font();
+		f.sheet = font;
+		f.characterWidth = 5;
+		f.characterHeight = 13;
+		f.margin = 1;
+		
+		f.specialWidth.put('a', 4);
+		f.specialWidth.put('g', 4);
+		f.specialWidth.put('h', 4);
+		f.specialWidth.put('I', 3);
+		f.specialWidth.put('i', 1);
+		f.specialWidth.put('J', 4);
+		f.specialWidth.put('j', 3);
+		f.specialWidth.put('K', 4);
+		f.specialWidth.put('k', 3);
+		f.specialWidth.put('l', 1);
+		f.specialWidth.put('n', 4);
+		f.specialWidth.put('o', 4);
+		f.specialWidth.put('P', 4);
+		f.specialWidth.put('p', 4);
+		f.specialWidth.put('q', 4);
+		f.specialWidth.put('R', 4);
+		f.specialWidth.put('r', 2);
+		f.specialWidth.put('s', 3);
+		f.specialWidth.put('t', 3);
+		f.specialWidth.put('u', 4);
+		f.specialWidth.put('v', 3);
+		f.specialWidth.put('X', 3);
+		f.specialWidth.put('x', 3);
+		f.specialWidth.put('Y', 4);
+		f.specialWidth.put('y', 4);
+		f.specialWidth.put('z', 3);
 		
 		tileSize = new Vector2f(32,32);
 		tileSheet = new SpriteSheet(null, new Vector2f(32,32));
@@ -540,7 +514,7 @@ public class LWJGLPlatformer extends Game {
 			}
 		}
 		
-		for(DrawQuadCall dqc : renderString("Bob was a little cat", new Vector2f(0,0))) {
+		for(DrawQuadCall dqc : Text.renderString("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOo", f, new Vector2f(0,0), scale).calls) {
 			drawCommands.add(dqc);
 		}
 		
