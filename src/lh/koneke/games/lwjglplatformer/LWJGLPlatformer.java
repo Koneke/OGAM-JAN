@@ -276,9 +276,6 @@ public class LWJGLPlatformer extends Game {
 			}
 			
 			tileSheet.getTexture().checkHotswap();
-			
-			//tileSheet.setTexture(new Texture2d(Texture2d.getLoaded(tileSheet.getTexture().path).texture, tileSheet.getTexture().path));
-			//tileSheet.getTexture().setTexture(Texture2d.getLoaded(tileSheet.getTexture().path).texture);
 		}
 	}
 	
@@ -292,27 +289,6 @@ public class LWJGLPlatformer extends Game {
 			scale,
 			10
 		));
-		/*
-		drawQuad(
-			levelBackground,
-			null,
-			new Quad(new Rectangle(new Vector2f(0,0), new Vector2f(512,256))),
-			scale
-		);*/
-		
-		/*
-		for(TileSlot t : currentScreen.activeTiles) {
-			drawQuad(
-				new Colour(1,0,0,1),
-				null,
-				new Quad(new Rectangle(
-					t.position.scale(
-						currentScreen.tileSize.x, currentScreen.tileSize.y),
-					tileSize)),
-				scale
-			);
-		}
-		*/
 		
 		for (int x = 0; x < currentScreen.map.length; x++) {
 			for (int y = 0; y < currentScreen.map[0].length; y++) {
@@ -334,18 +310,6 @@ public class LWJGLPlatformer extends Game {
 						scale,
 						t.depth
 					));
-					/*
-					drawQuad(
-						currentScreen.map[x][y].getSpriteSheet().getTexture(),
-						r,
-						new Quad(
-							new Rectangle(
-								currentScreen.map[x][y].position.scale(
-									currentScreen.tileSize.x, currentScreen.tileSize.y),
-								currentScreen.tileSize
-							)),
-						scale
-					);*/
 				}
 			}
 		}
@@ -364,14 +328,6 @@ public class LWJGLPlatformer extends Game {
 			scale,
 			player.depth
 		));
-		/*
-		drawQuad(
-			player.spriteSheet.getTexture(),
-			player.spriteSheet.getTexCoords(),
-			player.quad.offset(player.quad.topright.
-					subtract(player.quad.topleft).scale(-0.5f))
-					.offset(new Vector2f(0, -(float)Math.abs(Math.sin(Math.toRadians((180/(1000f/bumpsPerSecond))*player.lifetime)))*bump)),
-			scale);*/
 		
 		drawCommands.add(new DrawQuadCall(
 			binoculars.spriteSheet.getTexture(),
@@ -388,20 +344,6 @@ public class LWJGLPlatformer extends Game {
 				scale,
 				bob.depth
 			));
-	/*
-		drawQuad(
-			binoculars.spriteSheet.getTexture(),
-			binoculars.spriteSheet.getAt(binoculars.currentFrame),
-			binoculars.quad,
-			scale
-		);
-		
-		drawQuad(
-			bob.spriteSheet.getTexture(),
-			bob.spriteSheet.getAt(bob.currentFrame),
-			bob.quad,
-			scale
-		);*/
 		
 		if(contextMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
@@ -411,27 +353,15 @@ public class LWJGLPlatformer extends Game {
 				scale,
 				-10
 			));
-			/*
-			drawQuad(
-					contextMenu.getGraphics(),
-					null,
-					new Quad(contextMenu.getShape()),
-					scale
-					);*/
+
 			for(Button b : contextMenu.getItems()) {
 				drawCommands.add(new DrawQuadCall(
-						b.getGraphics(),
-						null,
-						new Quad(b.getShape()),
-						scale,
-						-11
-					));/*
-				drawQuad(
 					b.getGraphics(),
 					null,
 					new Quad(b.getShape()),
-					scale
-				);*/
+					scale,
+					-11
+				));
 			}
 		}
 		
@@ -447,6 +377,5 @@ public class LWJGLPlatformer extends Game {
 		for(DrawQuadCall dqc : drawCommands) {
 			drawQuad(dqc.d, dqc.source, dqc.q, dqc.scale);
 		}
-		//drawQuad(new Colour(1,1,1,1), null, new Quad(new Rectangle(0,0,32,32)), scale);
 	}
 }
