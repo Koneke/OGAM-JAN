@@ -16,11 +16,17 @@ public class Entity {
 	public int lifetime;
 	
 	String look;
+	String name;
 	
-	public Entity() {
+	public Entity(String name) {
+		this.name = name;
 	}
 	
 	public String lookAt() {
 		return look;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

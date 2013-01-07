@@ -15,13 +15,13 @@ public class Tile {
 	
 	public Tile(Vector2f tilePosition, boolean flipx) {
 		tile = tilePosition;
-		depth = 0;
+		depth = 1;
 		this.xflip = flipx;
 	}
 	
 	public Tile(Vector2f tilePosition, boolean flipx, boolean flipy) {
 		tile = tilePosition;
-		depth = 0;
+		depth = 1;
 		this.xflip = flipx;
 		this.yflip = flipy;
 	}
@@ -41,6 +41,6 @@ public class Tile {
 	
 	public Tile(Vector2f tilePosition) {
 		tile = tilePosition;
-		depth = 0; // 0 is the standard tile layer, player is drawn at -1
+		depth = 1; // 1 is the standard tile layer, player is drawn at 0
 	}
 }
