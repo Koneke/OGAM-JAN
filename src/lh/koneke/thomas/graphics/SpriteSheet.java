@@ -72,6 +72,15 @@ public class SpriteSheet implements DrawingObject {
 		return r;
 	}
 	
+	public Rectangle getAt(Vector2f position, Vector2f size) {
+		Rectangle r = new Rectangle(
+				position,
+				size
+		).scale(1f/texture.getWidth(), 1f/texture.getHeight());
+		
+		return r;
+	}
+	
 	public void Update(int dt) {
 		if (currentFrames.get(currentFrame).getDisplayTime() == -1) return;
 		timer += dt;

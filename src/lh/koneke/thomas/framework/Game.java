@@ -2,6 +2,7 @@ package lh.koneke.thomas.framework;
 
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawingObject;
+import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.SpriteSheet;
 import lh.koneke.thomas.graphics.Texture2d;
 
@@ -41,64 +42,6 @@ public class Game {
 			System.exit(0);
 		}
 	}
-	/*
-	public Texture loadTexture(String path) {
-		return loadTexture(path, "PNG", false);
-	}
-	
-	public Texture loadTexture(String path, boolean hotswap) {
-		return loadTexture(path, "PNG", hotswap);
-	}
-	
-	public Texture loadTexture(String path, String format, boolean hotswap) {
-		try {
-			Texture t = TextureLoader.getTexture(format, ResourceLoader.getResourceAsStream(path));
-			if(interpolationMode == "none") {
-				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-		    	GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-			}
-			
-			if(!hotswap) {
-				if (Texture2d.loaded(path, t)) { //if the texture wasn't loaded already, return it, else, null
-					return t;
-				}
-				else { 
-					return null;
-				}
-			} else {
-				return t;
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}*/
-	
-	/*public void drawQuad(DrawingObject d, Quad Q, float Scale) {
-		if(d instanceof Texture2d) { drawQuad((Texture2d)d, Q, Scale); }
-		if(d instanceof Colour) { drawQuad((Colour)d, Q, Scale); }
-		if(d instanceof SpriteSheet) {
-				SpriteSheet s = (SpriteSheet)d;
-				drawQuad(s.getTexture(), s.getTexCoords(), Q, Scale);
-			}
-		//drawQuad(d, Q);
-	}*/
-	/*
-	public void drawQuad(Texture2d texture, Quad Q) {
-		texture.Bind();
-		
-		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0, 0);
-			GL11.glVertex2d(Q.topleft.x, Q.topleft.y);
-			GL11.glTexCoord2f(1, 0);
-			GL11.glVertex2d(Q.topright.x, Q.topright.y);
-			GL11.glTexCoord2f(1, 1);
-			GL11.glVertex2d(Q.bottomright.x, Q.bottomright.y);
-			GL11.glTexCoord2f(0, 1);
-			GL11.glVertex2d(Q.bottomleft.x, Q.bottomleft.y);
-		GL11.glEnd();
-	}*/
 	
 	public void drawQuad(DrawingObject d, Rectangle source, Quad Q, Float scale) {
 		if(d instanceof Texture2d) {
@@ -113,7 +56,14 @@ public class Game {
 		if(d instanceof SpriteSheet) {
 			SpriteSheet s = (SpriteSheet)d;
 			s.getTexture().Bind();
-			source = new Rectangle(s.getTexCoords());
+			if (source == null) {
+				source = new Rectangle(s.getTexCoords());
+			}
+		}
+		if(d instanceof Frame) {
+			Frame f = (Frame)d;
+			f.sheet.getTexture().Bind();
+			source = new Rectangle(f.sheet.getAt(f.frame));
 		}
 		
 		float Scale;
@@ -147,64 +97,6 @@ public class Game {
 		GL11.glEnd();
 		GL11.glColor4f(1,1,1,1);
 	}
-	/*
-	public void drawQuad(Texture2d texture, Quad Q, float Scale) {
-		texture.Bind();
-		
-		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0, 0);
-			GL11.glVertex2f(Q.topleft.x * Scale, Q.topleft.y * Scale);
-			GL11.glTexCoord2f(1, 0);
-			GL11.glVertex2f(Q.topright.x * Scale, Q.topright.y * Scale);
-			GL11.glTexCoord2f(1, 1);
-			GL11.glVertex2f(Q.bottomright.x * Scale, Q.bottomright.y * Scale);
-			GL11.glTexCoord2f(0, 1);
-			GL11.glVertex2f(Q.bottomleft.x * Scale, Q.bottomleft.y * Scale);
-		GL11.glEnd();
-	}
-	
-	public void drawQuad(Texture2d texture, Rectangle source, Quad Q, float Scale) {
-		texture.Bind();
-		
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glTexCoord2f(source.x, source.y);
-			GL11.glVertex2f(Q.topleft.x * Scale, Q.topleft.y * Scale);
-			GL11.glTexCoord2f(source.x+source.w, source.y);
-			GL11.glVertex2f(Q.topright.x * Scale, Q.topright.y * Scale);
-			GL11.glTexCoord2f(source.x+source.w, source.y+source.h);
-			GL11.glVertex2f(Q.bottomright.x * Scale, Q.bottomright.y * Scale);
-			GL11.glTexCoord2f(source.x, source.y+source.h);
-			GL11.glVertex2f(Q.bottomleft.x * Scale, Q.bottomleft.y * Scale);
-		GL11.glEnd();
-	}
-	
-	public void drawQuad(Colour C, Quad Q) {
-		TextureImpl.bindNone();
-		GL11.glColor4f(C.getRed(), C.getGreen(), C.getBlue(), C.getAlpha());
-		
-		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glVertex2f(Q.topleft.x, Q.topleft.y);
-			GL11.glVertex2f(Q.topright.x, Q.topright.y);
-			GL11.glVertex2f(Q.bottomright.x, Q.bottomright.y);
-			GL11.glVertex2f(Q.bottomleft.x, Q.bottomleft.y);
-		GL11.glEnd();
-		
-		GL11.glColor4f(1,1,1,1);
-	}
-	
-	public void drawQuad(Colour c, Quad q, float scale) {
-		TextureImpl.bindNone();
-		GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
-		
-		GL11.glBegin(GL11.GL_QUADS);
-			GL11.glVertex2f(q.topleft.x * scale, q.topleft.y * scale);
-			GL11.glVertex2f(q.topright.x * scale, q.topright.y * scale);
-			GL11.glVertex2f(q.bottomright.x * scale, q.bottomright.y * scale);
-			GL11.glVertex2f(q.bottomleft.x * scale, q.bottomleft.y * scale);
-		GL11.glEnd();
-		
-		GL11.glColor4f(1,1,1,1);
-	}*/
 	
 	public void start() {
 		preInitialize();
@@ -235,10 +127,6 @@ public class Game {
 	private void preInitialize() {
 		setDisplay(800, 600);
 		t = new Time();
-		//lastFrame = getTime();
-		/*
-		GameMouse.setx(0);
-		GameMouse.sety(0);*/
 		
 		System.out.println("pre init OK");
 	}

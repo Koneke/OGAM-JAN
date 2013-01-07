@@ -3,7 +3,9 @@ package lh.koneke.games.lwjglplatformer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import lh.koneke.thomas.framework.Game;
@@ -15,6 +17,7 @@ import lh.koneke.thomas.framework.TextureInformation;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawingObject;
+import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.SpriteSheet;
 import lh.koneke.thomas.graphics.Texture2d;
 import lh.koneke.thomas.gui.Button;
@@ -22,6 +25,12 @@ import lh.koneke.thomas.gui.ContextMenu;
 
 public class LWJGLPlatformer extends Game {
 	public static void main(String[] args) { LWJGLPlatformer game = new LWJGLPlatformer(); game.start(); }
+	
+	/*
+	 * TODO:
+	 * remove textSheet, switch to new rendering instead.
+	 */
+	
 	
 	Vector2f screenSize;
 	float scale;
@@ -34,12 +43,14 @@ public class LWJGLPlatformer extends Game {
 	Entity player;
 	Entity binoculars;
 	Entity bob;
+	Entity ladder;
 	Vector2f playerTarget; //spot to move to
 	
 	Texture2d levelBackground;
 	Texture2d gridtexture;
 	Vector2f tileSize;
 	SpriteSheet tileSheet;
+	SpriteSheet textSheet;
 	
 	DrawingObject d;
 	
@@ -52,8 +63,13 @@ public class LWJGLPlatformer extends Game {
 	Entity selectedEntity;
 	boolean mouseFree = true;
 	
-	int hotswapFrequency = 5000; //time in ms for hotswap updating
+	int hotswapFrequency = 1000; //time in ms for hotswap updating
 	int hotswapTimer = 0;
+	
+	SpriteSheet font;
+	int fontWidth = 5; //size of letter
+	int fontMargin = 1;//margin between letters
+	Map<Character, Integer> fontCharacterWidth = new HashMap<Character, Integer>(); //characters of nonstandard width and their width
 	
 	public void sysInit() {
 		screenSize = new Vector2f(320, 256);
@@ -62,11 +78,73 @@ public class LWJGLPlatformer extends Game {
 		random = new Random();
 	}
 	
+	public List<DrawQuadCall> renderString(String string, Vector2f position) {
+		List<DrawQuadCall> calls = new ArrayList<DrawQuadCall>();
+		
+		int w = 0;
+		for(char c : string.toCharArray()) {
+			if(c == ' ') {
+				w += 4;
+				continue;
+			}
+			
+			char cc = (char)((c-65)*2);
+			//A = 0, B = 2, a = 1, b = 3
+			if(c >= 97) cc = (char)((c-97)*2+1);
+			
+			Vector2f charPosition = new Vector2f(cc*(fontWidth+fontMargin)+fontMargin, 0);
+			Vector2f charSize = new Vector2f(
+				(fontCharacterWidth.containsKey(c) ? fontCharacterWidth.get(c) : fontWidth), 13);
+			
+			calls.add(new DrawQuadCall(
+				font,
+				font.getAt(
+					charPosition,
+					charSize),
+				new Quad(new Rectangle(position.add(new Vector2f(w,0)), charSize)),
+				scale,
+				-10));
+			
+			w+=charSize.x+1;
+		}
+		return calls;
+	}
+	
 	public void initialize() {
 		sysInit();
+		
+		font = new SpriteSheet(null, new Vector2f(0,0));
 
+		fontCharacterWidth.put('a', 4);
+		fontCharacterWidth.put('g', 4);
+		fontCharacterWidth.put('h', 4);
+		fontCharacterWidth.put('I', 3);
+		fontCharacterWidth.put('i', 1);
+		fontCharacterWidth.put('J', 4);
+		fontCharacterWidth.put('j', 3);
+		fontCharacterWidth.put('K', 4);
+		fontCharacterWidth.put('k', 3);
+		fontCharacterWidth.put('l', 1);
+		fontCharacterWidth.put('n', 4);
+		fontCharacterWidth.put('o', 4);
+		fontCharacterWidth.put('P', 4);
+		fontCharacterWidth.put('p', 4);
+		fontCharacterWidth.put('q', 4);
+		fontCharacterWidth.put('R', 4);
+		fontCharacterWidth.put('r', 2);
+		fontCharacterWidth.put('s', 3);
+		fontCharacterWidth.put('t', 3);
+		fontCharacterWidth.put('u', 4);
+		fontCharacterWidth.put('v', 3);
+		fontCharacterWidth.put('X', 3);
+		fontCharacterWidth.put('x', 3);
+		fontCharacterWidth.put('Y', 4);
+		fontCharacterWidth.put('y', 4);
+		fontCharacterWidth.put('z', 3);
+		
 		tileSize = new Vector2f(32,32);
 		tileSheet = new SpriteSheet(null, new Vector2f(32,32));
+		textSheet = new SpriteSheet(null, new Vector2f(64,13));
 		currentScreen = new Screen(10, 8, tileSheet, tileSize, levelBackground);
 		
 		loadScreen(currentScreen);
@@ -84,6 +162,7 @@ public class LWJGLPlatformer extends Game {
 		currentScreen.activeTiles.add(player.currentTileSlot);
 		
 		binoculars = new Entity("Binoculars");
+		binoculars.nameTexture = new Frame(new Vector2f(64,13), textSheet);
 		binoculars.quad = new Quad(new Rectangle(new Vector2f(6*32,3*32), tileSize));
 		binoculars.logicalPosition = new Vector2f(6,3);
 		binoculars.currentTileSlot = currentScreen.map
@@ -96,6 +175,7 @@ public class LWJGLPlatformer extends Game {
 		binoculars.look = "You see binoculars.";
 		
 		bob = new Entity("Bob");
+		bob.nameTexture = new Frame(new Vector2f(64,26), textSheet);
 		bob.quad = new Quad(new Rectangle(new Vector2f(6*32,3*32), tileSize));
 		bob.logicalPosition = new Vector2f(6,3);
 		bob.currentTileSlot = currentScreen.map
@@ -107,12 +187,26 @@ public class LWJGLPlatformer extends Game {
 		currentScreen.activeTiles.add(bob.currentTileSlot);
 		bob.look = "You see bob.";
 		
-		contextMenu = new ContextMenu(new Vector2f(0,0), 32);
+		ladder = new Entity("Ladder");
+		ladder.nameTexture = new Frame(new Vector2f(64,39), textSheet);
+		ladder.quad = new Quad(new Rectangle(new Vector2f(6*32, 4*32), tileSize.scale(1, 2)));
+		ladder.currentFrame = new Vector2f(0,0);
+		ladder.depth = 1;
+		currentScreen.map[6][4].entities.add(ladder);
+		currentScreen.map[6][5].entities.add(ladder);
+		ladder.look = "It's a ladder";
+		
+		contextMenu = new ContextMenu(new Vector2f(0,0), 66);
 		contextMenu.setGraphics(new Colour(0.5f,0.5f,1,1));
 		
-		actionMenu = new ContextMenu(new Vector2f(0,0), 32);
-		actionMenu.setGraphics(new Colour(1,0,0,1));
+		actionMenu = new ContextMenu(new Vector2f(0,0), 66);
+		actionMenu.setGraphics(new Colour(0.5f,0.5f,1,1));
+		
 		commands.add("look");
+		actionMenu.addItem(
+			new Button(new Rectangle(new Vector2f(0,0), new Vector2f(64, 13)),
+			new Frame(new Vector2f(0,0), textSheet)
+		));
 		
 		d = new Colour(1,1,1,1);
 	}
@@ -136,6 +230,18 @@ public class LWJGLPlatformer extends Game {
 		texture = new Texture2d(Graphics.loadTexture(path), path);
 		if(texture.getTexture() != null) {
 			tileSheet.setTexture(texture);
+		} else { System.exit(0); }
+		
+		path = "res/textsheet.png";
+		texture = new Texture2d(Graphics.loadTexture(path), path);
+		if(texture.getTexture() != null) {
+			textSheet.setTexture(texture);
+		} else { System.exit(0); }
+
+		path = "res/font.png";
+		texture = new Texture2d(Graphics.loadTexture(path), path);
+		if(texture.getTexture() != null) {
+			font.setTexture(texture);
 		} else { System.exit(0); }
 
 		binoculars.spriteSheet = tileSheet;
@@ -188,10 +294,8 @@ public class LWJGLPlatformer extends Game {
 	}
 	
 	public void update() {
-		
 		if(GameMouse.right && !GameMouse.prevRight) {
 			contextMenu.setVisible(true);
-			
 			
 			Vector2f v = getGridPosition(GameMouse.getPosition().scale(1f/scale));
 			TileSlot tile = currentScreen.map[v.intx()][v.inty()];
@@ -201,8 +305,12 @@ public class LWJGLPlatformer extends Game {
 			int items = tile.entities.size();
 			for(int i = 0; i< items; i++) {
 				Button b = new Button(new Rectangle(
-						new Vector2f(contextMenu.getShape().getPosition().add(new Vector2f(1, 0))), new Vector2f(contextMenu.getShape().w-2,8)));
-				b.setGraphics(new Colour(1,1,1,1));
+					new Vector2f(contextMenu.getShape().getPosition().add(new Vector2f(1, 0))), new Vector2f(contextMenu.getShape().w-2,13)),
+					tile.entities.get(i).nameTexture
+				);
+				if (b.getGraphics() == null) {
+					b.setGraphics(new Colour(1,1,1,1));
+				}
 				contextMenu.addItem(b);
 			}
 			//clear the menu, and add a button for each entity in the tile
@@ -216,7 +324,7 @@ public class LWJGLPlatformer extends Game {
 			}
 			//shape and place the buttons
 			
-			contextMenu.getShape().h = h; //padding 4 on each side
+			contextMenu.getShape().h = h-2; //padding 4 on each side
 		}
 		
 		if(GameMouse.left && !GameMouse.prevLeft) {
@@ -235,14 +343,6 @@ public class LWJGLPlatformer extends Game {
 							actionMenu.getShape().setPosition(contextMenu.getShape().getPosition());
 							actionMenu.getShape().h = 4;
 							actionMenu.setVisible(true);
-						
-							actionMenu.clear();
-							for(int i = 0; i< commands.size(); i++) {
-								actionMenu.addItem(new Button(new Rectangle(
-									new Vector2f(actionMenu.getShape().getPosition().add(new Vector2f(1, 0))),
-									new Vector2f(actionMenu.getShape().w-2,8))));
-							}
-							//clear the actionmenu and add one button for each registered possible action
 							
 							float h = 2;
 							for(Button bb : actionMenu.getItems()) {
@@ -251,7 +351,7 @@ public class LWJGLPlatformer extends Game {
 								h += bb.getShape().h+2; //margin = 2
 							}
 							//place and shape the buttons
-							actionMenu.getShape().h = h;
+							actionMenu.getShape().h = h - 2;
 							
 							break;
 						}
@@ -280,6 +380,8 @@ public class LWJGLPlatformer extends Game {
 						}
 					}
 				}
+			} else {
+				mouseFree = true;
 			}
 		}
 		
@@ -328,6 +430,7 @@ public class LWJGLPlatformer extends Game {
 			}
 			
 			tileSheet.getTexture().checkHotswap();
+			textSheet.getTexture().checkHotswap();
 		}
 	}
 	
@@ -419,7 +522,7 @@ public class LWJGLPlatformer extends Game {
 		
 		if(actionMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
-					actionMenu.getGraphics(),
+				actionMenu.getGraphics(),
 				null,
 				new Quad(actionMenu.getShape()),
 				scale,
@@ -432,9 +535,13 @@ public class LWJGLPlatformer extends Game {
 					null,
 					new Quad(b.getShape()),
 					scale,
-					-11
+					-12
 				));
 			}
+		}
+		
+		for(DrawQuadCall dqc : renderString("Bob was a little cat", new Vector2f(0,0))) {
+			drawCommands.add(dqc);
 		}
 		
 		Collections.sort(drawCommands, new Comparator<DrawQuadCall>() {
