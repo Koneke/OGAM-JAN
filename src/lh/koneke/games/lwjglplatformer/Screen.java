@@ -34,4 +34,8 @@ public class Screen {
 			}
 		}
 	}
+	
+	public TileSlot getAt(Vector2f position) {
+		return map[position.intx()][position.inty()];
+	}
 }

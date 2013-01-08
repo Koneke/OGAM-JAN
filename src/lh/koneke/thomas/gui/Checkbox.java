@@ -1,10 +1,12 @@
 package lh.koneke.thomas.gui;
 
+import lh.koneke.games.lwjglplatformer.DrawQuadCall;
+import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Rectangle;
 import lh.koneke.thomas.graphics.DrawingObject;
 
 public class Checkbox extends GuiBase {
-	boolean checked;
+	boolean checked = false;
 	DrawingObject ticked;
 	
 	public Checkbox(Rectangle r) {
@@ -27,6 +29,10 @@ public class Checkbox extends GuiBase {
 		this.checked = state;
 	}
 	
+	public void toggle() {
+		this.checked = !this.checked;
+	}
+	
 	public void check() {
 		this.checked = true;
 	}
@@ -38,5 +44,14 @@ public class Checkbox extends GuiBase {
 	public DrawingObject getGraphics() {
 		if (checked) return ticked;
 		return graphics;
+	}
+	
+	public DrawQuadCall getCall(float scale, int depth) {
+		return new DrawQuadCall(
+			getGraphics(),
+			null,
+			new Quad(getShape()),
+			scale, depth
+		);
 	}
 }

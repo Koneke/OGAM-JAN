@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import lh.koneke.thomas.framework.Vector2f;
-import lh.koneke.thomas.framework.TextureInformation;
 
 import org.newdawn.slick.opengl.Texture;
 
