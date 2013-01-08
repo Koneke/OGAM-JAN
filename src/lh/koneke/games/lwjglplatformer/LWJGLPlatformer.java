@@ -1,7 +1,6 @@
 package lh.koneke.games.lwjglplatformer;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import lh.koneke.thomas.framework.Font;
 import lh.koneke.thomas.framework.Game;
 import lh.koneke.thomas.framework.GameMouse;
 import lh.koneke.thomas.framework.Graphics;
@@ -26,7 +26,6 @@ import lh.koneke.thomas.graphics.Texture2d;
 import lh.koneke.thomas.graphics.TextureInformation;
 import lh.koneke.thomas.gui.Button;
 import lh.koneke.thomas.gui.ContextMenu;
-import lh.koneke.thomas.gui.Font;
 import lh.koneke.thomas.gui.Text;
 
 public class LWJGLPlatformer extends Game {
@@ -35,10 +34,13 @@ public class LWJGLPlatformer extends Game {
 	Vector2f screenSize;
 	float scale;
 	
-	List<Entity> testList;
 	Random random;
 	
+	
+	
 	/* ~~~~~~~~~~ */
+	
+	
 	
 	Entity player;
 	Entity binoculars;
@@ -63,6 +65,12 @@ public class LWJGLPlatformer extends Game {
 	Font f;
 	SpriteSheet font;
 	
+	
+	
+	/* ~~~~~~~~~~ */
+	
+	
+	
 	public void sysInit() {
 		screenSize = new Vector2f(320, 256);
 		scale = 3f;
@@ -76,30 +84,27 @@ public class LWJGLPlatformer extends Game {
 		
 		f = new Font();
 		f.sheet = font;
-		f.characterWidth = 5;
-		f.characterHeight = 13;
-		f.margin = 1;
-		
-		/*FontFile
-		 *font texture path
-		 *(char width)*
-		 */
 		
 		try {
 			InputStream fis = new FileInputStream("res/font.thf");
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
-			String path = br.readLine();
+			
+			f.setPath(br.readLine());
+			
 			char[] file = br.readLine().toCharArray();
 			int ptr = 0;
+			f.characterWidth = (file[ptr]-48)*10+(file[ptr+1]-48); ptr+=2;
+			f.characterHeight = (file[ptr]-48)*10+(file[ptr+1]-48); ptr+=2;
+			f.margin = (file[ptr]-48); ptr+=1;
+
 			while(ptr < file.length) {
 				f.specialWidth.put((char)file[ptr], file[ptr+1]-48);
 				System.out.println("Put "+(char)file[ptr]+" "+(int)(file[ptr+1]-60));
-				ptr += 2; }
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+				ptr += 2; 
+			}
 		}
+		catch (FileNotFoundException e) { e.printStackTrace(); }
+		catch (IOException e) { e.printStackTrace(); }
 		
 		tileSize = new Vector2f(32,32);
 		tileSheet = new SpriteSheet(null, new Vector2f(32,32));
@@ -107,7 +112,6 @@ public class LWJGLPlatformer extends Game {
 		
 		loadScreen(currentScreen);
 
-		
 		player = new Entity("Player");
 		player.quad = new Quad(new Rectangle(new Vector2f(16,160), tileSize));
 		player.logicalPosition = getGridPosition(player.quad.topleft);
@@ -169,7 +173,7 @@ public class LWJGLPlatformer extends Game {
 			tileSheet.setTexture(texture);
 		} else { System.exit(0); }
 		
-		path = "res/font.png";
+		path = f.getPath();
 		texture = new Texture2d(Graphics.loadTexture(path), path);
 		if(texture.getTexture() != null) {
 			font.setTexture(texture);

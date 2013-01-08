@@ -1,4 +1,4 @@
-package lh.koneke.thomas.gui;
+package lh.koneke.thomas.framework;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,15 @@ public class Font {
 	public int characterHeight;
 	public int margin;
 	int spaceSize;
+	String path;
 	public SpriteSheet sheet;
 	public Map<Character, Integer> specialWidth = new HashMap<Character, Integer>();
+	
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
+	public String getPath() {
+		return path;
+	}
 }

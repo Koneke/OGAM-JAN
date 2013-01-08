@@ -5,6 +5,7 @@ import java.util.List;
 
 import lh.koneke.games.lwjglplatformer.DrawQuadCall;
 
+import lh.koneke.thomas.framework.Font;
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Rectangle;
 import lh.koneke.thomas.framework.Vector2f;
