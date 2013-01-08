@@ -122,7 +122,6 @@ public class LWJGLPlatformer extends Game {
 		player = new Entity("Player");
 		player.quad = new Quad(new Rectangle(new Vector2f(16,160), tileSize));
 		playerTarget = new Vector2f(player.quad.getCenter()); //where the player is moving towards
-		
 		player.logicalPosition = getGridPosition(player.quad.topleft);
 		player.currentTileSlot = currentScreen.map
 				[player.logicalPosition.intx()]
@@ -161,15 +160,15 @@ public class LWJGLPlatformer extends Game {
 		currentScreen.map[6][5].entities.add(ladder);
 		ladder.look = "It's a ladder";
 		
-		contextMenu = new ContextMenu(new Vector2f(0,0), 66);
-		contextMenu.setGraphics(new Colour(0.5f,0.5f,1,1));
+		contextMenu = new ContextMenu(new Vector2f(0,0), 68);
+		contextMenu.setGraphics(new Colour(0.3f,0.3f,0.3f,1));
 		
-		actionMenu = new ContextMenu(new Vector2f(0,0), 66);
-		actionMenu.setGraphics(new Colour(0.5f,0.5f,1,1));
+		actionMenu = new ContextMenu(new Vector2f(0,0), 68);
+		actionMenu.setGraphics(new Colour(0.3f,0.3f,0.3f,1));
 		
 		commands.add("Look at");
 		actionMenu.addItem(
-			new Button(new Rectangle(new Vector2f(0,0), new Vector2f(64, 13)),
+			new Button(new Rectangle(new Vector2f(0,0), new Vector2f(66, 15)),
 			null
 		));
 		
@@ -264,7 +263,8 @@ public class LWJGLPlatformer extends Game {
 			int items = tile.entities.size();
 			for(int i = 0; i< items; i++) {
 				Button b = new Button(new Rectangle(
-					new Vector2f(contextMenu.getShape().getPosition().add(new Vector2f(1, 0))), new Vector2f(contextMenu.getShape().w-2,13)),
+					new Vector2f(contextMenu.getShape().getPosition().add(new Vector2f(1, 0))), new Vector2f(contextMenu.getShape().w-2,
+						f.characterHeight+2)),
 					tile.entities.get(i).nameTexture
 				);
 				if (b.getGraphics() == null) {
@@ -283,7 +283,7 @@ public class LWJGLPlatformer extends Game {
 			}
 			//shape and place the buttons
 			
-			contextMenu.getShape().h = h-2; //padding 4 on each side
+			contextMenu.getShape().h = h;
 		}
 		
 		if(GameMouse.left && !GameMouse.prevLeft) {
@@ -310,7 +310,7 @@ public class LWJGLPlatformer extends Game {
 								h += bb.getShape().h+2; //margin = 2
 							}
 							//place and shape the buttons
-							actionMenu.getShape().h = h - 2;
+							actionMenu.getShape().h = h;
 							
 							break;
 						}
@@ -328,7 +328,7 @@ public class LWJGLPlatformer extends Game {
 							String command = commands.get(actionMenu.getItems().indexOf(b));
 							
 							switch(command) {
-								case "look":
+								case "Look at":
 									System.out.println(selectedEntity.lookAt()); break;
 								default:
 									System.out.println("Uh, what?");
@@ -414,28 +414,19 @@ public class LWJGLPlatformer extends Game {
 		}
 		
 		for (int x = 0; x < currentScreen.map.length; x++) {
-			for (int y = 0; y < currentScreen.map[0].length; y++) {
-				for (Tile t : currentScreen.map[x][y].getTiles()) {
-					Vector2f v = t.tile;
-					Rectangle r = currentScreen.map[x][y].getSpriteSheet().getAt(v);
-					if(t.xflip) r=r.xflip();
-					if(t.yflip) r=r.yflip();
-					
-					drawCommands.add(new DrawQuadCall(
-						currentScreen.map[x][y].getSpriteSheet().getTexture(),
-						r,
-						new Quad(
-							new Rectangle(
-								currentScreen.map[x][y].position.scale(
-									currentScreen.tileSize.x, currentScreen.tileSize.y),
-								currentScreen.tileSize
-							)),
-						scale,
-						t.depth
-					));
-				}
-			}
-		}
+		for (int y = 0; y < currentScreen.map[0].length; y++) {
+		for (Tile t : currentScreen.map[x][y].getTiles()) {
+			Vector2f v = t.tile;
+			Rectangle r = currentScreen.map[x][y].getSpriteSheet().getAt(v);
+			if(t.xflip) r=r.xflip();
+			if(t.yflip) r=r.yflip();
+			
+			drawCommands.add(new DrawQuadCall(
+				currentScreen.map[x][y].getSpriteSheet().getTexture(), r,
+				new Quad(new Rectangle(
+					currentScreen.map[x][y].position.scale(
+						currentScreen.tileSize.x, currentScreen.tileSize.y),
+					currentScreen.tileSize)), scale, t.depth));}}}
 		
 		player.spriteSheet.Update(dt);
 		
@@ -453,60 +444,50 @@ public class LWJGLPlatformer extends Game {
 		));
 		
 		drawCommands.add(new DrawQuadCall(
-			binoculars.spriteSheet.getTexture(),
-			binoculars.spriteSheet.getAt(binoculars.currentFrame),
-			binoculars.quad,
-			scale,
-			binoculars.depth
-		));
+			binoculars.spriteSheet.getTexture(), binoculars.spriteSheet.getAt(binoculars.currentFrame),
+			binoculars.quad, scale, binoculars.depth ));
 		
 		drawCommands.add(new DrawQuadCall(
-			bob.spriteSheet.getTexture(),
-			bob.spriteSheet.getAt(binoculars.currentFrame),
-			bob.quad,
-			scale,
-			bob.depth
-		));
+			bob.spriteSheet.getTexture(), bob.spriteSheet.getAt(binoculars.currentFrame),
+			bob.quad, scale, bob.depth ));
 		
 		if(contextMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
-				contextMenu.getGraphics(),
-				null,
-				new Quad(contextMenu.getShape()),
-				scale,
-				-9
-			));
+				contextMenu.getGraphics(), null,
+				new Quad(contextMenu.getShape()), scale, -10 ));
 			
 			for(Button b : contextMenu.getItems()) {
+				drawCommands.add(new DrawQuadCall(
+					new Colour(0.5f,0.5f,0.5f,1), null,
+					new Quad(b.getShape()), scale, -11));
 				drawCommands.addAll(Text.renderString(
 					contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b)).name,
-					f, b.getShape().getPosition(), scale).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12).calls);
 			}
 		}
 		
 		if(actionMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
-				actionMenu.getGraphics(),
-				null,
-				new Quad(actionMenu.getShape()),
-				scale,
-				-9
-			));
+				actionMenu.getGraphics(), null,
+				new Quad(actionMenu.getShape()), scale, -10));
 			
 			for(Button b : actionMenu.getItems()) {
+				drawCommands.add(new DrawQuadCall(
+					new Colour(0.5f,0.5f,0.5f,1), null,
+					new Quad(b.getShape()), scale, -11));
 				drawCommands.addAll(Text.renderString(
 					commands.get(actionMenu.getItems().indexOf(b)),
-					f, b.getShape().getPosition(), scale).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12).calls);
 			}
 		}
+		
+		/*Sort and run calls*/
 		
 		Collections.sort(drawCommands, new Comparator<DrawQuadCall>() {
 			public int compare(DrawQuadCall a, DrawQuadCall b) {
 				if (a.depth < b.depth) return -1;
 				if (a.depth > b.depth) return 1;
-				return 0;
-			}
-		});
+				return 0; }});
 		Collections.reverse(drawCommands);
 		
 		for(DrawQuadCall dqc : drawCommands) {
