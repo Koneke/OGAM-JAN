@@ -127,9 +127,10 @@ public class LWJGLPlatformer extends Game {
 		player.quad = new Quad(new Rectangle(new Vector2f(16,160), tileSize));
 		playerTarget = new Vector2f(player.quad.getCenter()); //where the player is moving towards
 		
-		player.logicalPosition = new Vector2f(
+		/*player.logicalPosition = new Vector2f(
 				(float)Math.floor(player.quad.topleft.intx()/tileSize.x),
-				(float)Math.floor(player.quad.topleft.inty()/tileSize.y));
+				(float)Math.floor(player.quad.topleft.inty()/tileSize.y));*/
+		player.logicalPosition = getGridPosition(player.quad.topleft);
 		player.currentTileSlot = currentScreen.map
 				[player.logicalPosition.intx()]
 				[player.logicalPosition.inty()];
@@ -375,8 +376,7 @@ public class LWJGLPlatformer extends Game {
 						((player.quad.topleft.x > playerTarget.x) ? -1 : 1)*dt*tileSize.x/250f, 0));
 			int postMove = (int)((player.quad.topleft.x - player.quad.topleft.x % tileSize.x) / tileSize.x);
 			if(postMove != preMove) {
-				player.logicalPosition.x = (float)Math.floor(player.quad.topleft.intx()/tileSize.x);
-				player.logicalPosition.y = (float)Math.floor(player.quad.topleft.inty()/tileSize.y);
+				player.logicalPosition = getGridPosition(player.quad.topleft);
 				
 				currentScreen.activeTiles.remove(player.currentTileSlot);
 				player.currentTileSlot = currentScreen.map[postMove][player.logicalPosition.inty()];
@@ -418,6 +418,16 @@ public class LWJGLPlatformer extends Game {
 			scale,
 			10
 		));
+		
+		for(TileSlot t : currentScreen.activeTiles) {
+			drawCommands.add(new DrawQuadCall(
+				new Colour(1,0,0,1),
+				null,
+				new Quad(new Rectangle(t.position.scale(tileSize.x, tileSize.y), tileSize)),
+				scale,
+				9
+			));
+		}
 		
 		for (int x = 0; x < currentScreen.map.length; x++) {
 			for (int y = 0; y < currentScreen.map[0].length; y++) {
