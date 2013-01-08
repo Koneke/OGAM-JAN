@@ -1,5 +1,13 @@
 package lh.koneke.games.lwjglplatformer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -72,19 +80,26 @@ public class LWJGLPlatformer extends Game {
 		f.characterHeight = 13;
 		f.margin = 1;
 		
-		f.specialWidth.put('a', 4); f.specialWidth.put('g', 4);
-		f.specialWidth.put('h', 4); f.specialWidth.put('I', 3);
-		f.specialWidth.put('i', 1); f.specialWidth.put('J', 4);
-		f.specialWidth.put('j', 3); f.specialWidth.put('K', 4);
-		f.specialWidth.put('k', 3); f.specialWidth.put('l', 1);
-		f.specialWidth.put('n', 4);	f.specialWidth.put('o', 4);
-		f.specialWidth.put('P', 4);	f.specialWidth.put('p', 4);
-		f.specialWidth.put('q', 4);	f.specialWidth.put('R', 4);
-		f.specialWidth.put('r', 2);	f.specialWidth.put('s', 3);
-		f.specialWidth.put('t', 3);	f.specialWidth.put('u', 4);
-		f.specialWidth.put('v', 3);	f.specialWidth.put('X', 3);
-		f.specialWidth.put('x', 3);	f.specialWidth.put('Y', 4);
-		f.specialWidth.put('y', 4);	f.specialWidth.put('z', 3);
+		/*FontFile
+		 *font texture path
+		 *(char width)*
+		 */
+		
+		try {
+			InputStream fis = new FileInputStream("res/font.thf");
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
+			String path = br.readLine();
+			char[] file = br.readLine().toCharArray();
+			int ptr = 0;
+			while(ptr < file.length) {
+				f.specialWidth.put((char)file[ptr], file[ptr+1]-48);
+				System.out.println("Put "+(char)file[ptr]+" "+(int)(file[ptr+1]-60));
+				ptr += 2; }
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		tileSize = new Vector2f(32,32);
 		tileSheet = new SpriteSheet(null, new Vector2f(32,32));
@@ -437,6 +452,10 @@ public class LWJGLPlatformer extends Game {
 					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12).calls);
 			}
 		}
+		
+		drawCommands.addAll(Text.renderString(
+				"ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuwxyz",
+				f, new Vector2f(0,0), scale, -10).calls);
 		
 		/*Sort and run calls*/
 		
