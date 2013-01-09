@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import lh.koneke.thomas.framework.Game;
+import lh.koneke.thomas.framework.Rectangle;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.AnimationFrame;
 
@@ -87,7 +88,7 @@ public class AnimationManager {
 					time = Integer.parseInt(entries[1]);
 					if(entries.length > 2 ) {
 						sound = entries[2];
-					}
+					} else { sound = null; }
 					
 					animations.get(readAnimation).add(new AnimationFrame(new Vector2f(x,y), time, sound));
 					System.out.println("Added "+x+","+y+" (s "+sound+") to "+readAnimation);
@@ -108,6 +109,10 @@ public class AnimationManager {
 
 	public int getCurrentFrame() {
 		return currentFrame;
+	}
+	
+	public Rectangle getFrame() {
+		return new Rectangle(currentFrames.get(currentFrame).getFrame(), frameSize);
 	}
 
 	public void setCurrentFrame(int currentFrame) {

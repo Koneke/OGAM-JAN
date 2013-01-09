@@ -207,7 +207,7 @@ public class LWJGLPlatformer extends Game {
 				Button b = new Button(new Rectangle(
 					new Vector2f(contextMenu.getShape().getPosition().add(new Vector2f(1, 0))), new Vector2f(contextMenu.getShape().w-2,
 						f.characterHeight+2)),
-					tile.entities.get(i).nameTexture
+					null
 				);
 				if (b.getGraphics() == null) {
 					b.setGraphics(new Colour(1,1,1,1));
@@ -276,13 +276,14 @@ public class LWJGLPlatformer extends Game {
 							//handle command
 							switch(command) {
 								case "Look at":
-									System.out.println(selectedEntity.lookAt());
 									console[0] = console[1];
 									console[1] = console[2];
-									console[2] = selectedEntity.lookAt();
+									console[2] = selectedEntity.getLook();
 									break;
 								default:
-									System.out.println("Uh, what?");
+									console[0] = console[1];
+									console[1] = console[2];
+									console[2] = "Uh, what?";
 							}
 							
 							//action menu is done

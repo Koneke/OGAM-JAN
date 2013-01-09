@@ -2,7 +2,6 @@ package lh.koneke.games.lwjglplatformer;
 
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Vector2f;
-import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.SpriteSheet;
 
 public class Entity {
@@ -15,8 +14,6 @@ public class Entity {
 	public TileSlot currentTileSlot;
 	public int lifetime;
 	
-	public Frame nameTexture;
-	
 	/*
 	 * name
 	 * x,y,z
@@ -28,16 +25,12 @@ public class Entity {
 	public Vector2f logicalPosition; //position in grid
 	public int depth;
 	private String look;
-	public Vector2f size; //covers several squares?
+	public Vector2f size; //covers several squares
 	
 	
 	public Entity(String name) {
 		this.name = name;
 		am = new AnimationManager();
-	}
-	
-	public String lookAt() {
-		return getLook();
 	}
 
 	public String getName() {

@@ -10,6 +10,7 @@ Entity file format
 Clean up context menus
 Globalize scale variable instead of passing it all the time
 Rework getting graphics from entities
+Console write function (small, but saves repetition)
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)
