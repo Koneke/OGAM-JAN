@@ -11,6 +11,17 @@ import java.util.Map;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.AnimationFrame;
 
+
+/*animation file
+ * -name;
+ * x,y time( sound);x,y time( sound);...
+ * 
+ * example
+ * -walking
+ * 32,0 250 footstep;
+ * 64,0 250;
+ */
+
 public class AnimationManager {
 	Map<String, List<AnimationFrame>> animations = new HashMap<String, List<AnimationFrame>>();
 	String currentAnimation;
@@ -18,16 +29,6 @@ public class AnimationManager {
 	private int currentFrame;
 	int timer; //ms passed
 	Vector2f frameSize;
-	
-	/*animation file
-	 * -name;
-	 * x,y time( sound);x,y time( sound);...
-	 * 
-	 * example
-	 * -walking
-	 * 32,0 250 footstep;
-	 * 64,0 250;
-	 */
 	
 	public void startAnimation(String animation) {
 		currentAnimation = animation;

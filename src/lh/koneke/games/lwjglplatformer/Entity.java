@@ -6,20 +6,30 @@ import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.SpriteSheet;
 
 public class Entity {
-	public Vector2f logicalPosition; //position in grid
 	public Quad quad;
 	
 	public SpriteSheet spriteSheet;
 	public AnimationManager am;
 	public Vector2f currentFrame;
-	public int depth;
 
 	public TileSlot currentTileSlot;
 	public int lifetime;
 	
-	String look;
-	String name;
 	public Frame nameTexture;
+	
+	/*
+	 * name
+	 * x,y,z
+	 * look
+	 * size
+	 */
+
+	String name;
+	public Vector2f logicalPosition; //position in grid
+	public int depth;
+	private String look;
+	public Vector2f size; //covers several squares?
+	
 	
 	public Entity(String name) {
 		this.name = name;
@@ -27,10 +37,18 @@ public class Entity {
 	}
 	
 	public String lookAt() {
-		return look;
+		return getLook();
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public String getLook() {
+		return look;
+	}
+
+	public void setLook(String look) {
+		this.look = look;
 	}
 }

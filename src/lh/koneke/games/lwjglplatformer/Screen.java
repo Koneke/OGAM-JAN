@@ -12,7 +12,7 @@ public class Screen {
 	Vector2f screenSize;
 	Vector2f mapSize;
 	Texture2d levelBackground;
-	List<TileSlot> activeTiles; //needed?
+	private List<TileSlot> activeTiles; //needed?
 	Vector2f tileSize;
 	SpriteSheet tileSheet;
 	
@@ -24,7 +24,7 @@ public class Screen {
 		mapSize = new Vector2f(w, h);
 		screenSize = mapSize.scale(tileSize.x, tileSize.y);
 		map = new TileSlot[w][h];
-		activeTiles = new ArrayList<TileSlot>();
+		setActiveTiles(new ArrayList<TileSlot>());
 		
 		for(int x = 0; x < map.length; x++) {
 			for(int y = 0; y < map[x].length; y++) {
@@ -37,5 +37,17 @@ public class Screen {
 	
 	public TileSlot getAt(Vector2f position) {
 		return map[position.intx()][position.inty()];
+	}
+	
+	public Vector2f getTileSize() {
+		return tileSize;
+	}
+
+	public List<TileSlot> getActiveTiles() {
+		return activeTiles;
+	}
+
+	public void setActiveTiles(List<TileSlot> activeTiles) {
+		this.activeTiles = activeTiles;
 	}
 }

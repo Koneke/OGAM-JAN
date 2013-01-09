@@ -2,3 +2,4 @@ bin/
 foo/
 devres/
 lib/
+*.bak

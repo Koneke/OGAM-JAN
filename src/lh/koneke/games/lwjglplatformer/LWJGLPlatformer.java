@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import lh.koneke.thomas.framework.EntityManager;
 import lh.koneke.thomas.framework.Font;
 import lh.koneke.thomas.framework.Game;
 import lh.koneke.thomas.framework.GameMouse;
@@ -33,9 +34,10 @@ public class LWJGLPlatformer extends Game {
 	
 	/* ~~~~~~~~~~ */
 	
+	EntityManager em;
 	Entity player;
-	Entity binoculars;
-	Entity ladder;
+	//Entity binoculars;
+	//Entity ladder;
 	Vector2f playerTarget; //spot to move to
 	
 	Texture2d levelBackground;
@@ -81,9 +83,6 @@ public class LWJGLPlatformer extends Game {
 			console[i] = "";
 		}
 
-		sm = new SoundManager();
-		
-		f.load("res/font.thf");
 		
 		tileSize = new Vector2f(32,32);
 		tileSheet = new SpriteSheet(null, new Vector2f(32,32));
@@ -91,32 +90,23 @@ public class LWJGLPlatformer extends Game {
 		
 		loadScreen(currentScreen);
 
-		player = new Entity("Player");
-		player.quad = new Quad(new Rectangle(new Vector2f(16,160), tileSize));
-		player.logicalPosition = getGridPosition(player.quad.topleft);
-		player.currentTileSlot = currentScreen.getAt(player.logicalPosition);
-		currentScreen.activeTiles.add(player.currentTileSlot);
-		player.look = "Oi oi oi No eyeballin you muppet";
+		sm = new SoundManager();
+		em = new EntityManager(currentScreen);
+		
+		f.load("res/font.thf");
+		
+		em.load("res/entities.the");
+		em.getEntity("binoculars").currentFrame = new Vector2f(0, 96); //todo: rm
+		em.getEntity("ladder").currentFrame = new Vector2f(0, 0); //todo: rm
+		
+		player = new Entity("Player"); //name
+		player.quad = new Quad(new Rectangle(new Vector2f(16,160), tileSize)); //comes from initial tile
+		player.logicalPosition = getGridPosition(player.quad.topleft); //comes from initial tile
+		player.currentTileSlot = currentScreen.getAt(player.logicalPosition); //comes from initial tile
+		currentScreen.getActiveTiles().add(player.currentTileSlot); //comes from initial tile
+		player.setLook("Oi oi oi No eyeballin you muppet"); //look
 		
 		playerTarget = new Vector2f(player.quad.getCenter()); //where the player is moving towards
-		
-		binoculars = new Entity("Binoculars");
-		binoculars.quad = new Quad(new Rectangle(new Vector2f(6*32,3*32), tileSize));
-		binoculars.logicalPosition = new Vector2f(6,3);
-		binoculars.currentTileSlot = currentScreen.getAt(binoculars.logicalPosition);
-		binoculars.currentFrame = new Vector2f(0,96);
-		binoculars.depth = -1;
-		currentScreen.getAt(binoculars.logicalPosition).entities.add(binoculars);
-		currentScreen.activeTiles.add(binoculars.currentTileSlot);
-		binoculars.look = "You see binoculars";
-		
-		ladder = new Entity("Ladder");
-		ladder.quad = new Quad(new Rectangle(new Vector2f(6*32, 4*32), tileSize.scale(1, 2)));
-		ladder.currentFrame = new Vector2f(0,0);
-		ladder.depth = 1;
-		currentScreen.map[6][4].entities.add(ladder);
-		currentScreen.map[6][5].entities.add(ladder);
-		ladder.look = "It is a ladder";
 		
 		contextMenu = new ContextMenu(new Vector2f(0,0), 68);
 		contextMenu.setGraphics(new Colour(0.3f,0.3f,0.3f,1));
@@ -146,17 +136,18 @@ public class LWJGLPlatformer extends Game {
 		
 		path = "res/testsheet2.png";
 		texture = new Texture2d(Graphics.loadTexture(path), path);
-		if(texture.getTexture() != null) {
-			tileSheet.setTexture(texture);
-		} else { System.exit(0); }
+		if(texture.getTexture() != null) { tileSheet.setTexture(texture); } else { System.exit(0); }
 		
 		path = f.getPath();
 		texture = new Texture2d(Graphics.loadTexture(path), path);
-		if(texture.getTexture() != null) {
-			font.setTexture(texture);
-		} else { System.exit(0); }
+		if(texture.getTexture() != null) { font.setTexture(texture); } else { System.exit(0); }
 
-		binoculars.spriteSheet = tileSheet;
+		em.getEntity("binoculars").spriteSheet = tileSheet;	//Todo: integrate into entities system
+		em.getEntity("binoculars").am.addFrameToAnimation("idle", new Vector2f(0, 96), -1);
+		
+		em.getEntity("ladder").spriteSheet = tileSheet;	//Todo: integrate into entities system
+		em.getEntity("binoculars").am.addFrameToAnimation("idle", new Vector2f(0, 0), -1);
+		
 		
 		path = "res/testbg2.png";
 		levelBackground = new Texture2d(Graphics.loadTexture(path), path);
@@ -336,12 +327,12 @@ public class LWJGLPlatformer extends Game {
 			if(preMove.x != postMove.x || preMove.y != postMove.y) {
 				player.logicalPosition = getGridPosition(player.quad.topleft);
 				
-				currentScreen.activeTiles.remove(player.currentTileSlot);
+				currentScreen.getActiveTiles().remove(player.currentTileSlot);
 				currentScreen.getAt(preMove).entities.remove(player);
 				
 				player.currentTileSlot = currentScreen.getAt(postMove);
 				
-				currentScreen.activeTiles.add(player.currentTileSlot);
+				currentScreen.getActiveTiles().add(player.currentTileSlot);
 				currentScreen.getAt(postMove).entities.add(player);
 			}
 			
@@ -427,9 +418,16 @@ public class LWJGLPlatformer extends Game {
 					.offset(new Vector2f(0, -(float)Math.abs(Math.sin(Math.toRadians((180/(1000f/bumpsPerSecond))*player.lifetime)))*bump)),
 			scale, player.depth, null));
 		
-		drawCommands.add(new DrawQuadCall(
+
+		for(Entity e : em.getEntities().values()) {
+			drawCommands.add(new DrawQuadCall(
+				tileSheet, null, tileSheet.getAt(e.currentFrame),
+				e.quad, scale, e.depth, null));
+		}
+		
+		/*drawCommands.add(new DrawQuadCall(
 			binoculars.spriteSheet.getTexture(), null, binoculars.spriteSheet.getAt(binoculars.currentFrame),
-			binoculars.quad, scale, binoculars.depth, null));
+			binoculars.quad, scale, binoculars.depth, null));*/
 		
 		if(contextMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
