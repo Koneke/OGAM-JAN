@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lh.koneke.thomas.framework.Game;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.AnimationFrame;
 
@@ -52,6 +53,11 @@ public class AnimationManager {
 	
 	void advance() {
 		setCurrentFrame((getCurrentFrame() + 1) % getCurrentFrames().size());
+		
+		String sound = currentFrames.get(getCurrentFrame()).getSound();
+		if(sound != null) {
+			Game.sm.play(sound);
+		}
 	}
 	
 	public void addFrameToAnimation(String animation, Vector2f framePosition ,int displayTime) {

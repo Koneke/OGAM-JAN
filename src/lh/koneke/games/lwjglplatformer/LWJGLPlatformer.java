@@ -60,7 +60,6 @@ public class LWJGLPlatformer extends Game {
 	
 	String[] console;
 	
-	SoundManager sm;
 	
 	/* ~~~~~~~~~~ */
 	
@@ -96,8 +95,8 @@ public class LWJGLPlatformer extends Game {
 		f.load("res/font.thf");
 		
 		em.load("res/entities.the");
-		em.getEntity("binoculars").currentFrame = new Vector2f(0, 96); //todo: rm
-		em.getEntity("ladder").currentFrame = new Vector2f(0, 0); //todo: rm
+		em.getEntity("Binoculars").currentFrame = new Vector2f(0, 96); //todo: rm
+		em.getEntity("Ladder").currentFrame = new Vector2f(0, 0); //todo: rm
 		
 		player = new Entity("Player"); //name
 		player.quad = new Quad(new Rectangle(new Vector2f(16,160), tileSize)); //comes from initial tile
@@ -142,11 +141,11 @@ public class LWJGLPlatformer extends Game {
 		texture = new Texture2d(Graphics.loadTexture(path), path);
 		if(texture.getTexture() != null) { font.setTexture(texture); } else { System.exit(0); }
 
-		em.getEntity("binoculars").spriteSheet = tileSheet;	//Todo: integrate into entities system
-		em.getEntity("binoculars").am.addFrameToAnimation("idle", new Vector2f(0, 96), -1);
+		em.getEntity("Binoculars").spriteSheet = tileSheet;	//Todo: integrate into entities system
+		em.getEntity("Binoculars").am.addFrameToAnimation("idle", new Vector2f(0, 96), -1);
 		
-		em.getEntity("ladder").spriteSheet = tileSheet;	//Todo: integrate into entities system
-		em.getEntity("binoculars").am.addFrameToAnimation("idle", new Vector2f(0, 0), -1);
+		em.getEntity("Ladder").spriteSheet = tileSheet;	//Todo: integrate into entities system
+		em.getEntity("Binoculars").am.addFrameToAnimation("idle", new Vector2f(0, 0), -1);
 		
 		
 		path = "res/testbg2.png";
@@ -155,7 +154,7 @@ public class LWJGLPlatformer extends Game {
 		
 		/* --- audio --- */
 		
-		sm.load("res/Randomize3.wav"); //is player with sm.play("Randomize3");
+		Game.sm.load("res/Randomize3.wav"); //is player with sm.play("Randomize3");
 		
 	}
 	
@@ -200,9 +199,11 @@ public class LWJGLPlatformer extends Game {
 	}
 	
 	public void update() {
+		/* 
+		 * TODO:
+		 * clean menu stuff
+		 */
 		if(GameMouse.right && !GameMouse.prevRight) {
-			//sm.play("Randomize3"); sound test
-			sm.play("Randomize3", 1f);
 			actionMenu.setVisible(false);
 			contextMenu.setVisible(true);
 			
@@ -424,10 +425,6 @@ public class LWJGLPlatformer extends Game {
 				tileSheet, null, tileSheet.getAt(e.currentFrame),
 				e.quad, scale, e.depth, null));
 		}
-		
-		/*drawCommands.add(new DrawQuadCall(
-			binoculars.spriteSheet.getTexture(), null, binoculars.spriteSheet.getAt(binoculars.currentFrame),
-			binoculars.quad, scale, binoculars.depth, null));*/
 		
 		if(contextMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(

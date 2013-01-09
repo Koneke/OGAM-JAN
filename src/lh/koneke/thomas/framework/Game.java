@@ -1,6 +1,7 @@
 package lh.koneke.thomas.framework;
 
 import lh.koneke.games.lwjglplatformer.AnimationManager;
+import lh.koneke.games.lwjglplatformer.SoundManager;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawingObject;
 import lh.koneke.thomas.graphics.Frame;
@@ -22,6 +23,7 @@ public class Game {
 	public Vector2f mousePosition;
 	
 	public Time t;
+	public static SoundManager sm = new SoundManager();
 	
 	public void setDisplay(int w, int h) {
 		if (Display.isCreated()) Display.destroy();

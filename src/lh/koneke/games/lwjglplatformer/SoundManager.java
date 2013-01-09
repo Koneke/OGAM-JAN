@@ -14,7 +14,11 @@ public class SoundManager {
 	}
 	
 	public void play(String sound) {
-		sounds.get(sound).play();
+		if(sounds.containsKey(sound)) {
+		sounds.get(sound).play();}
+		else {
+			System.out.println("BAD SOUND");
+		}
 	}
 
 	public void play(String sound, float volume) {

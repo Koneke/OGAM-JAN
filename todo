@@ -7,6 +7,8 @@ Render to texture (e.g. like parts of the screen we know won't change)
 Finish radio gui elements
 Map class relations and usage for structure overview, clean up, merge etc.
 Entity file format
+Clean up context menus
+Globalize scale variable instead of passing it all the time
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)
