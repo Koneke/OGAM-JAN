@@ -6,4 +6,8 @@ Save TextDrawCalls from renderString in Text object, and only render if none is 
 Render to texture (e.g. like parts of the screen we know won't change)
 Finish radio and check button gui elements
 Map class relations and usage for structure overview, clean up, merge etc.
+Entity file format
+
+Done:
 Switch to new text rendering in the context menus (remove the textSheet)
+Coloured text (not restricted to text)

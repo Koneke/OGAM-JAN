@@ -3,12 +3,14 @@ package lh.koneke.thomas.graphics;
 import lh.koneke.thomas.framework.Vector2f;
 
 public class AnimationFrame {
-	public Vector2f frame;
-	public int displayTime;
+	private Vector2f frame;
+	private int displayTime;
+	private String sound;
 	
-	public AnimationFrame(Vector2f frame, int displayTime) {
+	public AnimationFrame(Vector2f frame, int displayTime, String sound) {
 		this.frame = frame;
 		this.displayTime = displayTime;
+		this.sound = sound;
 	}
 	
 	public Vector2f getFrame() {
@@ -17,5 +19,9 @@ public class AnimationFrame {
 
 	public int getDisplayTime() {
 		return displayTime;
+	}
+	
+	public String getSound() {
+		return sound;
 	}
 }

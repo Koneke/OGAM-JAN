@@ -48,10 +48,10 @@ public class Checkbox extends GuiBase {
 	
 	public DrawQuadCall getCall(float scale, int depth) {
 		return new DrawQuadCall(
-			getGraphics(),
+			getGraphics(), null,
 			null,
 			new Quad(getShape()),
-			scale, depth
+			scale, depth, null
 		);
 	}
 }

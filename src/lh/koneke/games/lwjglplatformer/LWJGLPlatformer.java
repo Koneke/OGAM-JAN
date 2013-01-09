@@ -1,17 +1,12 @@
 package lh.koneke.games.lwjglplatformer;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+
+import org.lwjgl.opengl.GL11;
 
 import lh.koneke.thomas.framework.Font;
 import lh.koneke.thomas.framework.Game;
@@ -36,11 +31,7 @@ public class LWJGLPlatformer extends Game {
 	
 	Random random;
 	
-	
-	
 	/* ~~~~~~~~~~ */
-	
-	
 	
 	Entity player;
 	Entity binoculars;
@@ -67,9 +58,9 @@ public class LWJGLPlatformer extends Game {
 	
 	String[] console;
 	
+	SoundManager sm;
+	
 	/* ~~~~~~~~~~ */
-	
-	
 	
 	public void sysInit() {
 		screenSize = new Vector2f(320, 256);
@@ -87,29 +78,12 @@ public class LWJGLPlatformer extends Game {
 		
 		console = new String[3];
 		for(int i = 0; i < 3; i++){
-			console[i] = "abc";
+			console[i] = "";
 		}
-		
-		try {
-			InputStream fis = new FileInputStream("res/font.thf");
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
-			
-			f.setPath(br.readLine());
-			
-			char[] file = br.readLine().toCharArray();
-			int ptr = 0;
-			f.characterWidth = (file[ptr]-48)*10+(file[ptr+1]-48); ptr+=2;
-			f.characterHeight = (file[ptr]-48)*10+(file[ptr+1]-48); ptr+=2;
-			f.margin = (file[ptr]-48); ptr+=1;
 
-			while(ptr < file.length) {
-				f.specialWidth.put((char)file[ptr], file[ptr+1]-48);
-				System.out.println("Put "+(char)file[ptr]+" "+(int)(file[ptr+1]-60));
-				ptr += 2; 
-			}
-		}
-		catch (FileNotFoundException e) { e.printStackTrace(); }
-		catch (IOException e) { e.printStackTrace(); }
+		sm = new SoundManager();
+		
+		f.load("res/font.thf");
 		
 		tileSize = new Vector2f(32,32);
 		tileSheet = new SpriteSheet(null, new Vector2f(32,32));
@@ -132,7 +106,6 @@ public class LWJGLPlatformer extends Game {
 		binoculars.currentTileSlot = currentScreen.getAt(binoculars.logicalPosition);
 		binoculars.currentFrame = new Vector2f(0,96);
 		binoculars.depth = -1;
-		//currentScreen.map[binoculars.logicalPosition.intx()][binoculars.logicalPosition.inty()].entities.add(binoculars);
 		currentScreen.getAt(binoculars.logicalPosition).entities.add(binoculars);
 		currentScreen.activeTiles.add(binoculars.currentTileSlot);
 		binoculars.look = "You see binoculars";
@@ -167,10 +140,8 @@ public class LWJGLPlatformer extends Game {
 		texture = new Texture2d(Graphics.loadTexture(path), path);
 		if(texture.getTexture() != null) {
 			player.spriteSheet = new SpriteSheet(texture, new Vector2f(32,32));
-			player.spriteSheet.addFrameToAnimation("idle", new Vector2f(0,0), 250);
-			player.spriteSheet.addFrameToAnimation("walking", new Vector2f(32,0), 250);
-			player.spriteSheet.addFrameToAnimation("walking", new Vector2f(64,0), 250);
-			player.spriteSheet.startAnimation("idle");
+			player.am.load("res/player.tha");
+			player.am.startAnimation("idle");
 		} else { System.exit(0); }
 		
 		path = "res/testsheet2.png";
@@ -190,6 +161,10 @@ public class LWJGLPlatformer extends Game {
 		path = "res/testbg2.png";
 		levelBackground = new Texture2d(Graphics.loadTexture(path), path);
 		if(levelBackground == null) { System.exit(0); }
+		
+		/* --- audio --- */
+		
+		sm.load("res/Randomize3.wav"); //is player with sm.play("Randomize3");
 		
 	}
 	
@@ -235,6 +210,8 @@ public class LWJGLPlatformer extends Game {
 	
 	public void update() {
 		if(GameMouse.right && !GameMouse.prevRight) {
+			//sm.play("Randomize3"); sound test
+			sm.play("Randomize3", 1f);
 			actionMenu.setVisible(false);
 			contextMenu.setVisible(true);
 			
@@ -368,12 +345,12 @@ public class LWJGLPlatformer extends Game {
 				currentScreen.getAt(postMove).entities.add(player);
 			}
 			
-			if(player.spriteSheet.getAnimation() != "walking") {
-				player.spriteSheet.startAnimation("walking");
+			if(player.am.getAnimation() != "walking") {
+				player.am.startAnimation("walking");
 			}
 		} else {
-			if(player.spriteSheet.getAnimation() != "idle") {
-				player.spriteSheet.startAnimation("idle");
+			if(player.am.getAnimation() != "idle") {
+				player.am.startAnimation("idle");
 			}
 		}
 		
@@ -399,9 +376,9 @@ public class LWJGLPlatformer extends Game {
 		List<DrawQuadCall> drawCommands = new ArrayList<DrawQuadCall>();
 		
 		drawCommands.add(new DrawQuadCall(
-			levelBackground, null,
+			levelBackground, null, null,
 			new Quad(new Rectangle(new Vector2f(0,0), new Vector2f(512,256))),
-			scale, 10
+			scale, 10, null
 		));
 		
 		/*
@@ -414,6 +391,7 @@ public class LWJGLPlatformer extends Game {
 				3
 			));
 		}*/
+		//debugging, show active tiles
 		
 		for (int x = 0; x < currentScreen.map.length; x++) {
 			for (int y = 0; y < currentScreen.map[0].length; y++) {
@@ -425,71 +403,72 @@ public class LWJGLPlatformer extends Game {
 					if(t.yflip) r=r.yflip();
 					
 					drawCommands.add(new DrawQuadCall(
-						currentScreen.map[x][y].getSpriteSheet().getTexture(), r,
+						currentScreen.map[x][y].getSpriteSheet().getTexture(), null, r,
 						new Quad(new Rectangle(
 							currentScreen.map[x][y].position.scale(
 									currentScreen.tileSize.x,
 									currentScreen.tileSize.y),
 							currentScreen.tileSize)),
-						scale, t.depth));
+						scale, t.depth, null));
 				}
 			}
 		}
 		
-		player.spriteSheet.Update(dt);
+		player.am.Update(dt);
 		
 		float bump = 0; float bumpsPerSecond = 4;
-		if(player.spriteSheet.getAnimation() == "walking") { bump = 5f; }
+		if(player.am.getAnimation() == "walking") { bump = 5f; }
 		
 		drawCommands.add(new DrawQuadCall(
-			player.spriteSheet.getTexture(),
-			player.spriteSheet.getTexCoords(),
+			player.spriteSheet.getTexture(), player.am,
+			player.spriteSheet.getTexCoords(player.am),
 			player.quad.offset(player.quad.topright.
 					subtract(player.quad.topleft).scale(-0.5f))
 					.offset(new Vector2f(0, -(float)Math.abs(Math.sin(Math.toRadians((180/(1000f/bumpsPerSecond))*player.lifetime)))*bump)),
-			scale, player.depth));
+			scale, player.depth, null));
 		
 		drawCommands.add(new DrawQuadCall(
-			binoculars.spriteSheet.getTexture(), binoculars.spriteSheet.getAt(binoculars.currentFrame),
-			binoculars.quad, scale, binoculars.depth));
+			binoculars.spriteSheet.getTexture(), null, binoculars.spriteSheet.getAt(binoculars.currentFrame),
+			binoculars.quad, scale, binoculars.depth, null));
 		
 		if(contextMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
-				contextMenu.getGraphics(), null,
-				new Quad(contextMenu.getShape()), scale, -10 ));
+				contextMenu.getGraphics(), null, null,
+				new Quad(contextMenu.getShape()), scale, -10, null));
 			
 			for(Button b : contextMenu.getItems()) {
 				drawCommands.add(new DrawQuadCall(
-					new Colour(0.5f,0.5f,0.5f,1), null,
-					new Quad(b.getShape()), scale, -11));
+					new Colour(0.5f,0.5f,0.5f,1), null, null,
+					new Quad(b.getShape()), scale, -11, null));
 				drawCommands.addAll(Text.renderString(
 					contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b)).name,
-					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12, null).calls);
 			}
 		}
 		
 		if(actionMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
-				actionMenu.getGraphics(), null,
-				new Quad(actionMenu.getShape()), scale, -10));
+				actionMenu.getGraphics(), null, null,
+				new Quad(actionMenu.getShape()), scale, -10, null));
 			
 			for(Button b : actionMenu.getItems()) {
 				drawCommands.add(new DrawQuadCall(
-					new Colour(0.5f,0.5f,0.5f,1), null,
-					new Quad(b.getShape()), scale, -11));
+					new Colour(0.5f,0.5f,0.5f,1), null, null,
+					new Quad(b.getShape()), scale, -11, null));
 				drawCommands.addAll(Text.renderString(
 					commands.get(actionMenu.getItems().indexOf(b)),
-					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12, null).calls);
 			}
 		}
 		
 		/*drawCommands.addAll(Text.renderString(
 				"ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuwxyz",
-				f, new Vector2f(0,0), scale, -10).calls);*/
+				f, new Vector2f(0,0), scale, -10, new Colour(1,0,0,1)).calls);*/
+		//debugging, draw alphabet
 		
 		for(int i = 0;i<3;i++) {
 			drawCommands.addAll(Text.renderString(
-				console[i], f, new Vector2f(2,f.characterHeight*i), scale, -10).calls);
+				console[i], f, new Vector2f(2,f.characterHeight*i), scale, -10, new Colour(0,0,0,1)).calls);
 		}
 		
 		/*Sort and run calls*/
@@ -502,7 +481,10 @@ public class LWJGLPlatformer extends Game {
 		Collections.reverse(drawCommands);
 		
 		for(DrawQuadCall dqc : drawCommands) {
-			drawQuad(dqc.d, dqc.source, dqc.q, dqc.scale);
+			if(dqc.c != null) {
+				GL11.glColor4f(dqc.c.getRed(), dqc.c.getGreen(), dqc.c.getBlue(), dqc.c.getAlpha());
+			}
+			drawQuad(dqc.d, dqc.am, dqc.source, dqc.q, dqc.scale);
 		}
 	}
 }

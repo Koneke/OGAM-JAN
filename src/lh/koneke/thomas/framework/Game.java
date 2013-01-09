@@ -1,5 +1,6 @@
 package lh.koneke.thomas.framework;
 
+import lh.koneke.games.lwjglplatformer.AnimationManager;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawingObject;
 import lh.koneke.thomas.graphics.Frame;
@@ -8,9 +9,11 @@ import lh.koneke.thomas.graphics.Texture2d;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.TextureImpl;
 
 public class Game {
@@ -43,7 +46,7 @@ public class Game {
 		}
 	}
 	
-	public void drawQuad(DrawingObject d, Rectangle source, Quad Q, Float scale) {
+	public void drawQuad(DrawingObject d, AnimationManager am, Rectangle source, Quad Q, Float scale) {
 		if(d instanceof Texture2d) {
 			Texture2d texture = (Texture2d)d;
 			texture.Bind();
@@ -57,7 +60,7 @@ public class Game {
 			SpriteSheet s = (SpriteSheet)d;
 			s.getTexture().Bind();
 			if (source == null) {
-				source = new Rectangle(s.getTexCoords());
+				source = new Rectangle(s.getTexCoords(am));
 			}
 		}
 		if(d instanceof Frame) {
@@ -157,6 +160,7 @@ public class Game {
 		GameMouse.prevRight = GameMouse.right;
 		GameMouse.prevWheel = GameMouse.wheel;
 		Display.update();
+		SoundStore.get().poll(0);
 	}
 	
 	private void preDraw() {
@@ -170,6 +174,7 @@ public class Game {
 	}
 	public void unload() {} //to be overridden
 	private void postUnload() {
+		AL.destroy();
 		System.out.println("post unload OK");
 	}
 }

@@ -10,6 +10,7 @@ public class Entity {
 	public Quad quad;
 	
 	public SpriteSheet spriteSheet;
+	public AnimationManager am;
 	public Vector2f currentFrame;
 	public int depth;
 
@@ -22,6 +23,7 @@ public class Entity {
 	
 	public Entity(String name) {
 		this.name = name;
+		am = new AnimationManager();
 	}
 	
 	public String lookAt() {

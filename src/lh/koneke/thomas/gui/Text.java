@@ -9,6 +9,7 @@ import lh.koneke.thomas.framework.Font;
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Rectangle;
 import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.graphics.Colour;
 
 public class Text {
 	String string;
@@ -18,7 +19,7 @@ public class Text {
 		this.string = string;
 	}
 	
-	public static TextDrawCalls renderString(String string, Font font, Vector2f position, float scale, int depth) {
+	public static TextDrawCalls renderString(String string, Font font, Vector2f position, float scale, int depth, Colour C) {
 		TextDrawCalls tdc = new TextDrawCalls();
 		List<DrawQuadCall> calls = new ArrayList<DrawQuadCall>();
 		
@@ -39,13 +40,13 @@ public class Text {
 				font.characterHeight);
 			
 			calls.add(new DrawQuadCall(
-				font.sheet,
+				font.sheet, null,
 				font.sheet.getAt(
 					charPosition,
 					charSize),
 				new Quad(new Rectangle(position.add(new Vector2f(w,0)), charSize)),
 				scale,
-				depth));
+				depth, C));
 			
 			w+=charSize.x+1;
 		}
