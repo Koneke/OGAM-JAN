@@ -9,6 +9,7 @@ Map class relations and usage for structure overview, clean up, merge etc.
 Entity file format
 Clean up context menus
 Globalize scale variable instead of passing it all the time
+Rework getting graphics from entities
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)

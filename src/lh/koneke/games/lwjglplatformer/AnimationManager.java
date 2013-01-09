@@ -114,4 +114,8 @@ public class AnimationManager {
 		this.currentFrame = currentFrame;
 	}
 	
+	/*
+	public float hate() {
+		return 387.44f; //million miles;
+	}*/
 }

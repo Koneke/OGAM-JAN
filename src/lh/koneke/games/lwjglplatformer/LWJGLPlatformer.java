@@ -35,9 +35,6 @@ public class LWJGLPlatformer extends Game {
 	/* ~~~~~~~~~~ */
 	
 	EntityManager em;
-	Entity player;
-	//Entity binoculars;
-	//Entity ladder;
 	Vector2f playerTarget; //spot to move to
 	
 	Texture2d levelBackground;
@@ -60,7 +57,6 @@ public class LWJGLPlatformer extends Game {
 	
 	String[] console;
 	
-	
 	/* ~~~~~~~~~~ */
 	
 	public void sysInit() {
@@ -82,7 +78,6 @@ public class LWJGLPlatformer extends Game {
 			console[i] = "";
 		}
 
-		
 		tileSize = new Vector2f(32,32);
 		tileSheet = new SpriteSheet(null, new Vector2f(32,32));
 		currentScreen = new Screen(10, 8, tileSheet, tileSize, levelBackground);
@@ -98,14 +93,7 @@ public class LWJGLPlatformer extends Game {
 		em.getEntity("Binoculars").currentFrame = new Vector2f(0, 96); //todo: rm
 		em.getEntity("Ladder").currentFrame = new Vector2f(0, 0); //todo: rm
 		
-		player = new Entity("Player"); //name
-		player.quad = new Quad(new Rectangle(new Vector2f(16,160), tileSize)); //comes from initial tile
-		player.logicalPosition = getGridPosition(player.quad.topleft); //comes from initial tile
-		player.currentTileSlot = currentScreen.getAt(player.logicalPosition); //comes from initial tile
-		currentScreen.getActiveTiles().add(player.currentTileSlot); //comes from initial tile
-		player.setLook("Oi oi oi No eyeballin you muppet"); //look
-		
-		playerTarget = new Vector2f(player.quad.getCenter()); //where the player is moving towards
+		playerTarget = new Vector2f(em.getEntity("player").quad.getCenter()); //where the player is moving towards
 		
 		contextMenu = new ContextMenu(new Vector2f(0,0), 68);
 		contextMenu.setGraphics(new Colour(0.3f,0.3f,0.3f,1));
@@ -128,9 +116,9 @@ public class LWJGLPlatformer extends Game {
 		path = "res/testsheet.png";
 		texture = new Texture2d(Graphics.loadTexture(path), path);
 		if(texture.getTexture() != null) {
-			player.spriteSheet = new SpriteSheet(texture, new Vector2f(32,32));
-			player.am.load("res/player.tha");
-			player.am.startAnimation("idle");
+			em.getEntity("player").spriteSheet = new SpriteSheet(texture, new Vector2f(32,32));
+			em.getEntity("player").am.load("res/player.tha");
+			em.getEntity("player").am.startAnimation("idle");
 		} else { System.exit(0); }
 		
 		path = "res/testsheet2.png";
@@ -314,39 +302,39 @@ public class LWJGLPlatformer extends Game {
 				playerTarget.x = GameMouse.getPosition().scale(1f/scale).x;
 			} else {
 				//if the mouse is not free, set our current position as target
-				playerTarget.x = player.quad.topleft.x;
+				playerTarget.x = em.getEntity("player").quad.topleft.x;
 			}
 		}
 		
-		if(Math.abs(player.quad.topleft.x - playerTarget.x) > 1) {
-			player.spriteSheet.xflip = GameMouse.getPosition().scale(1f/scale).x < player.quad.topleft.x;
+		if(Math.abs(em.getEntity("player").quad.topleft.x - playerTarget.x) > 1) {
+			em.getEntity("player").spriteSheet.xflip = GameMouse.getPosition().scale(1f/scale).x < em.getEntity("player").quad.topleft.x;
 			
-			Vector2f preMove = getGridPosition(player.quad.topleft);
-			player.quad.move(new Vector2f(((player.quad.topleft.x > playerTarget.x) ? -1 : 1)*dt*tileSize.x/250f, 0));
-			Vector2f postMove = getGridPosition(player.quad.topleft);
+			Vector2f preMove = getGridPosition(em.getEntity("player").quad.topleft);
+			em.getEntity("player").quad.move(new Vector2f(((em.getEntity("player").quad.topleft.x > playerTarget.x) ? -1 : 1)*dt*tileSize.x/250f, 0));
+			Vector2f postMove = getGridPosition(em.getEntity("player").quad.topleft);
 			
 			if(preMove.x != postMove.x || preMove.y != postMove.y) {
-				player.logicalPosition = getGridPosition(player.quad.topleft);
+				em.getEntity("player").logicalPosition = getGridPosition(em.getEntity("player").quad.topleft);
 				
-				currentScreen.getActiveTiles().remove(player.currentTileSlot);
-				currentScreen.getAt(preMove).entities.remove(player);
+				currentScreen.getActiveTiles().remove(em.getEntity("player").currentTileSlot);
+				currentScreen.getAt(preMove).entities.remove(em.getEntity("player"));
 				
-				player.currentTileSlot = currentScreen.getAt(postMove);
+				em.getEntity("player").currentTileSlot = currentScreen.getAt(postMove);
 				
-				currentScreen.getActiveTiles().add(player.currentTileSlot);
-				currentScreen.getAt(postMove).entities.add(player);
+				currentScreen.getActiveTiles().add(em.getEntity("player").currentTileSlot);
+				currentScreen.getAt(postMove).entities.add(em.getEntity("player"));
 			}
 			
-			if(player.am.getAnimation() != "walking") {
-				player.am.startAnimation("walking");
+			if(em.getEntity("player").am.getAnimation() != "walking") {
+				em.getEntity("player").am.startAnimation("walking");
 			}
 		} else {
-			if(player.am.getAnimation() != "idle") {
-				player.am.startAnimation("idle");
+			if(em.getEntity("player").am.getAnimation() != "idle") {
+				em.getEntity("player").am.startAnimation("idle");
 			}
 		}
 		
-		player.lifetime += dt;
+		em.getEntity("player").lifetime += dt;
 		hotswapTimer += dt;
 		if (hotswapTimer > hotswapFrequency) {
 			while (hotswapTimer > hotswapFrequency) {
@@ -406,24 +394,27 @@ public class LWJGLPlatformer extends Game {
 			}
 		}
 		
-		player.am.Update(dt);
+		em.getEntity("player").am.Update(dt);
 		
 		float bump = 0; float bumpsPerSecond = 4;
-		if(player.am.getAnimation() == "walking") { bump = 5f; }
+		if(em.getEntity("player").am.getAnimation() == "walking") { bump = 5f; }
 		
 		drawCommands.add(new DrawQuadCall(
-			player.spriteSheet.getTexture(), player.am,
-			player.spriteSheet.getTexCoords(player.am),
-			player.quad.offset(player.quad.topright.
-					subtract(player.quad.topleft).scale(-0.5f))
-					.offset(new Vector2f(0, -(float)Math.abs(Math.sin(Math.toRadians((180/(1000f/bumpsPerSecond))*player.lifetime)))*bump)),
-			scale, player.depth, null));
+			em.getEntity("player").spriteSheet.getTexture(),
+			em.getEntity("player").am,
+			em.getEntity("player").spriteSheet.getTexCoords(em.getEntity("player").am),
+			em.getEntity("player").quad.offset(em.getEntity("player").quad.topright.
+					subtract(em.getEntity("player").quad.topleft).scale(-0.5f))
+					.offset(new Vector2f(0, -(float)Math.abs(Math.sin(Math.toRadians((180/(1000f/bumpsPerSecond))*em.getEntity("player").lifetime)))*bump)),
+			scale, em.getEntity("player").depth, null));
 		
 
 		for(Entity e : em.getEntities().values()) {
+			if(!e.name.equals("player")) {
 			drawCommands.add(new DrawQuadCall(
-				tileSheet, null, tileSheet.getAt(e.currentFrame),
+				tileSheet, e.am, e.spriteSheet.getAt(e.currentFrame),
 				e.quad, scale, e.depth, null));
+			}
 		}
 		
 		if(contextMenu.getVisible()) {
