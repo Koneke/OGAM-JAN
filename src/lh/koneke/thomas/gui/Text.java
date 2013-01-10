@@ -37,6 +37,7 @@ public class Text {
 			 * apost  39
 			 * exclm  33
 			 * quest  63
+			 * slash  47
 			 */
 			Map<Character, Character> exchangeMap = new HashMap<Character, Character>();
 			exchangeMap.put('.', (char) 52);
@@ -44,6 +45,7 @@ public class Text {
 			exchangeMap.put('\'',(char) 54);
 			exchangeMap.put('!', (char) 55);
 			exchangeMap.put('?', (char) 56);
+			exchangeMap.put('/', (char) 57);
 			
 			if(exchangeMap.containsKey(c)) {
 				cc = exchangeMap.get(c);

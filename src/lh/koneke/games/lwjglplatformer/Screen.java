@@ -88,46 +88,37 @@ public class Screen {
 				
 				/* part 1, position */
 				String[] split = parts[0].split(",");
-				System.out.println("Part 1 - "+parts[0]);
 				
-				String xf = split[0];
-				String yf = split[1];
+				String positionx = split[0];
+				String positiony = split[1];
 				
-				int xfirst = ((xf.indexOf('-') != -1) ? Integer.parseInt(xf.split("-")[0]) : Integer.parseInt(xf));
-				if(xf.indexOf('-') != -1) {
-				System.out.println(xf.split("-")[0]);
-				System.out.println(xf.split("-")[1]);
-				}
-				int xlast = ((xf.indexOf('-') != -1) ? Integer.parseInt(
-						(xf.split("-")[1].equals("w") ? Integer.toString((int)mapSize.x-1) : xf.split("-")[1])
-					) : Integer.parseInt(xf));
-				int yfirst = ((yf.indexOf('-') != -1) ? Integer.parseInt(yf.split("-")[0]) : Integer.parseInt(yf));
-				int ylast = ((yf.indexOf('-') != -1) ? Integer.parseInt(
-						(yf.split("-")[1].equals("h") ? Integer.toString((int)mapSize.y-1) : yf.split("-")[1])
-					) : Integer.parseInt(yf));
+				int xfirst = ((positionx.indexOf('-') != -1) ? Integer.parseInt(positionx.split("-")[0]) : Integer.parseInt(positionx));
+				int xlast = ((positionx.indexOf('-') != -1) ? Integer.parseInt(
+						(positionx.split("-")[1].equals("w") ? Integer.toString((int)mapSize.x-1) : positionx.split("-")[1])
+					) : Integer.parseInt(positionx));
+				
+				int yfirst = ((positiony.indexOf('-') != -1) ? Integer.parseInt(positiony.split("-")[0]) : Integer.parseInt(positiony));
+				int ylast = ((positiony.indexOf('-') != -1) ? Integer.parseInt(
+						(positiony.split("-")[1].equals("h") ? Integer.toString((int)mapSize.y-1) : positiony.split("-")[1])
+					) : Integer.parseInt(positiony));
 				
 				int z = split.length == 3 ? Integer.parseInt(split[0]) : 0;
-				
 				
 				/* part 2, source */
 				split = parts[1].split(",");
 
-				String sourceX = split[0];
-				String sourceY = split[1];
+				String readx = split[0];
+				String ready = split[1];
 				
-				int sxfirst = ((sourceX.indexOf('-') != -1) ? Integer.parseInt(sourceX.split("-")[0]) : Integer.parseInt(sourceX));
-				int sxlast = ((sourceX.indexOf('-') != -1) ? Integer.parseInt(sourceX.split("-")[1]
-					) : sxfirst);
-				int syfirst = ((sourceY.indexOf('-') != -1) ? Integer.parseInt(sourceY.split("-")[0]) : Integer.parseInt(sourceY));
-				int sylast = ((sourceY.indexOf('-') != -1) ? Integer.parseInt(sourceY.split("-")[1]
-						) : syfirst);
-				/*
-				int sylast =  ((sourceY.indexOf('-') != -1) ? Integer.parseInt(
-						((sourceY.split("-")[1].equals("h")) ? Integer.toString(((int)screenSize.y-1)) : sourceY.split("-")[1])
-					) : Integer.parseInt(sourceY));*/
-				
-				int sx = (sxlast-sxfirst > 0 ? Game.random.nextInt(sxlast-sxfirst) : sxfirst);
-				int sy = (sylast-syfirst > 0 ? Game.random.nextInt(sylast-syfirst) : syfirst);
+				int sourcexfirst = ((readx.indexOf('-') != -1) ? Integer.parseInt(readx.split("-")[0]) : Integer.parseInt(readx));
+				int sourcexlast = ((readx.indexOf('-') != -1) ? Integer.parseInt(readx.split("-")[1]
+					) : sourcexfirst);
+				int sourceyfirst = ((ready.indexOf('-') != -1) ? Integer.parseInt(ready.split("-")[0]) : Integer.parseInt(ready));
+				int sourceylast = ((ready.indexOf('-') != -1) ? Integer.parseInt(ready.split("-")[1]
+						) : sourceyfirst);
+
+				int sourcex = (sourcexlast-sourcexfirst > 0 ? Game.random.nextInt(sourcexlast-sourcexfirst) : sourcexfirst);
+				int sourcey = (sourceylast-sourceyfirst > 0 ? Game.random.nextInt(sourceylast-sourceyfirst) : sourceyfirst);
 				
 				/* part 3, flips */
 				
@@ -145,8 +136,7 @@ public class Screen {
 				
 				for(int x = xfirst; x<=xlast;x++) {
 					for(int y = yfirst; y<=ylast;y++) {
-						map[x][y].addTile(new Tile(new Vector2f(sx,sy).scale(tileSize.x, tileSize.y), z, xflip, yflip));
-						//System.out.println("Would add "+sx+","+sy+" at "+x+","+y+", depth "+z+"."+(xflip ? " xflipped " : "")+(yflip?" yflipped":""));
+						map[x][y].addTile(new Tile(new Vector2f(sourcex,sourcey).scale(tileSize.x, tileSize.y), z, xflip, yflip));
 					}
 				}
 			}
