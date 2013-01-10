@@ -14,14 +14,6 @@ public class Quad implements Shape {
 		this.bottomright = bottomright;
 	}
 	
-	/*public Quad(float topleftx, float toplefty, float toprightx, float toprighty,
-				float bottomleftx, float bottomlefty, float bottomrightx, float bottomrighty) {
-		this.topleft = new Vector2f(topleftx, toplefty);
-		this.topright = new Vector2f(toprightx, toprighty);
-		this.bottomleft = new Vector2f(bottomleftx, bottomlefty);
-		this.bottomright = new Vector2f(bottomrightx, bottomrighty);
-	}*/
-	
 	public Quad(Rectangle rectangle) {
 		this.topleft = new Vector2f(rectangle.x,  rectangle.y);
 		this.topright = new Vector2f(rectangle.x + rectangle.w , rectangle.y);

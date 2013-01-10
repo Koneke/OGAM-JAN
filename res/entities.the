@@ -1,9 +1,15 @@
 :player
 bugger off eh
 0,5,0,1,1
+res/testsheet.png
+res/player.tha
 :Binoculars
 Could be handy
 6,3,-1,1,1
+res/testsheet2.png
+res/binoculars.tha
 :Ladder
 It is a ladder
 6,4,1,1,2
+res/testsheet2.png
+res/ladder.tha

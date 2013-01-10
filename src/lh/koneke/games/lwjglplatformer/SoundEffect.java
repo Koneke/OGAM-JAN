@@ -21,8 +21,6 @@ public class SoundEffect {
 		file.playAsSoundEffect(volume, panning, false);
 	}
 
-	
-	
 	public static Audio load(String path) {
 		try {
 			String[] splitpath = path.split("\\.");

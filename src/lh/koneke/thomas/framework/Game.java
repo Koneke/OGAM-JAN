@@ -5,7 +5,6 @@ import lh.koneke.games.lwjglplatformer.SoundManager;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawingObject;
 import lh.koneke.thomas.graphics.Frame;
-import lh.koneke.thomas.graphics.SpriteSheet;
 import lh.koneke.thomas.graphics.Texture2d;
 
 import org.lwjgl.LWJGLException;
@@ -58,17 +57,12 @@ public class Game {
 			TextureImpl.bindNone();
 			GL11.glColor4f(C.getRed(), C.getGreen(), C.getBlue(), C.getAlpha());
 		}
-		if(d instanceof SpriteSheet) {
-			SpriteSheet s = (SpriteSheet)d;
-			s.getTexture().Bind();
-			if (source == null) {
-				source = new Rectangle(s.getTexCoords(am));
-			}
-		}
 		if(d instanceof Frame) {
 			Frame f = (Frame)d;
-			f.sheet.getTexture().Bind();
-			source = new Rectangle(f.sheet.getAt(f.frame));
+			f.getTexture().Bind();
+			if(am != null) {
+				source = new Rectangle(f.getTexCoord(f.getTexture(), am));
+			}
 		}
 		
 		float Scale;

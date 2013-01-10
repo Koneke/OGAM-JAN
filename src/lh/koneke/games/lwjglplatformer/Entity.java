@@ -2,12 +2,12 @@ package lh.koneke.games.lwjglplatformer;
 
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Vector2f;
-import lh.koneke.thomas.graphics.SpriteSheet;
+import lh.koneke.thomas.graphics.Frame;
 
 public class Entity {
 	public Quad quad;
 	
-	public SpriteSheet spriteSheet;
+	public Frame graphics;
 	public AnimationManager am;
 	public Vector2f currentFrame;
 
@@ -26,7 +26,8 @@ public class Entity {
 	public int depth;
 	private String look;
 	public Vector2f size; //covers several squares
-	
+	public String texturePath;
+	public String thaPath;
 	
 	public Entity(String name) {
 		this.name = name;

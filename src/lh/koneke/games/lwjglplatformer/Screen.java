@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lh.koneke.thomas.framework.Vector2f;
-import lh.koneke.thomas.graphics.SpriteSheet;
+import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.Texture2d;
 
 public class Screen {
@@ -14,9 +14,9 @@ public class Screen {
 	Texture2d levelBackground;
 	private List<TileSlot> activeTiles; //needed?
 	Vector2f tileSize;
-	SpriteSheet tileSheet;
+	Frame tileSheet;
 	
-	public Screen(int w, int h, SpriteSheet tileSheet, Vector2f tileSize, Texture2d levelBackground) {
+	public Screen(int w, int h, Frame tileSheet, Vector2f tileSize, Texture2d levelBackground) {
 		this.tileSheet = tileSheet;
 		this.levelBackground = levelBackground;
 		this.tileSize = tileSize;
@@ -30,9 +30,13 @@ public class Screen {
 			for(int y = 0; y < map[x].length; y++) {
 				map[x][y] = new TileSlot();
 				map[x][y].position = new Vector2f(x, y);
-				map[x][y].setSpriteSheet(tileSheet);
+				map[x][y].parent = this;
 			}
 		}
+	}
+	
+	public Frame getFrame() {
+		return tileSheet;
 	}
 	
 	public TileSlot getAt(Vector2f position) {

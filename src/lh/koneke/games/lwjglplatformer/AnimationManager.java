@@ -30,7 +30,7 @@ public class AnimationManager {
 	private List<AnimationFrame> currentFrames;
 	private int currentFrame;
 	int timer; //ms passed
-	Vector2f frameSize;
+	Vector2f frameSize = new Vector2f(32,32);
 	
 	public void startAnimation(String animation) {
 		currentAnimation = animation;
@@ -85,7 +85,13 @@ public class AnimationManager {
 					String[] entries = s.split(" ");
 					x = Integer.parseInt(entries[0].split(",")[0]);
 					y = Integer.parseInt(entries[0].split(",")[1]);
-					time = Integer.parseInt(entries[1]);
+					
+					if(entries[1].equals("-")) {
+						time = -1;
+					} else {
+						time = Integer.parseInt(entries[1]);
+					}
+					
 					if(entries.length > 2 ) {
 						sound = entries[2];
 					} else { sound = null; }

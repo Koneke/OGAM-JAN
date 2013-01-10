@@ -17,7 +17,7 @@ import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Rectangle;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.Colour;
-import lh.koneke.thomas.graphics.SpriteSheet;
+import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.Texture2d;
 import lh.koneke.thomas.graphics.TextureInformation;
 import lh.koneke.thomas.gui.Button;
@@ -39,7 +39,7 @@ public class LWJGLPlatformer extends Game {
 	
 	Texture2d levelBackground;
 	Vector2f tileSize;
-	SpriteSheet tileSheet;
+	Frame tileSheet;
 	
 	Screen currentScreen;
 	
@@ -53,7 +53,7 @@ public class LWJGLPlatformer extends Game {
 	int hotswapTimer = 0;
 	
 	Font f;
-	SpriteSheet font;
+	Frame font;
 	
 	String[] console;
 	
@@ -68,7 +68,7 @@ public class LWJGLPlatformer extends Game {
 	
 	public void initialize() {
 		sysInit();
-		font = new SpriteSheet(null, new Vector2f(0,0));
+		font = new /*SpriteSheet(null, new Vector2f(0,0));*/Frame(null, null);
 		
 		f = new Font();
 		f.sheet = font;
@@ -79,7 +79,7 @@ public class LWJGLPlatformer extends Game {
 		}
 
 		tileSize = new Vector2f(32,32);
-		tileSheet = new SpriteSheet(null, new Vector2f(32,32));
+		tileSheet = new Frame(null, new Vector2f(32,32));
 		currentScreen = new Screen(10, 8, tileSheet, tileSize, levelBackground);
 		
 		loadScreen(currentScreen);
@@ -88,12 +88,9 @@ public class LWJGLPlatformer extends Game {
 		em = new EntityManager(currentScreen);
 		
 		f.load("res/font.thf");
-		
 		em.load("res/entities.the");
-		em.getEntity("Binoculars").currentFrame = new Vector2f(0, 96); //todo: rm
-		em.getEntity("Ladder").currentFrame = new Vector2f(0, 0); //todo: rm
 		
-		playerTarget = new Vector2f(em.getEntity("player").quad.getCenter()); //where the player is moving towards
+		playerTarget = new Vector2f(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f))); //where the player is moving towards
 		
 		contextMenu = new ContextMenu(new Vector2f(0,0), 68);
 		contextMenu.setGraphics(new Colour(0.3f,0.3f,0.3f,1));
@@ -113,14 +110,16 @@ public class LWJGLPlatformer extends Game {
 		String path;
 		Texture2d texture;
 		
-		path = "res/testsheet.png";
-		texture = new Texture2d(Graphics.loadTexture(path), path);
-		if(texture.getTexture() != null) {
-			em.getEntity("player").spriteSheet = new SpriteSheet(texture, new Vector2f(32,32));
-			em.getEntity("player").am.load("res/player.tha");
-			em.getEntity("player").am.startAnimation("idle");
-		} else { System.exit(0); }
-		
+		for(Entity e : em.getEntities().values()) {
+			e.graphics = new Frame(null, tileSize);
+			System.out.println("e loading "+e.texturePath);
+			e.graphics.setTexture(
+					new Texture2d(Graphics.loadTexture(e.texturePath),
+					e.texturePath));
+			e.am.load(e.thaPath);
+			e.am.startAnimation("idle");
+		}
+
 		path = "res/testsheet2.png";
 		texture = new Texture2d(Graphics.loadTexture(path), path);
 		if(texture.getTexture() != null) { tileSheet.setTexture(texture); } else { System.exit(0); }
@@ -128,13 +127,6 @@ public class LWJGLPlatformer extends Game {
 		path = f.getPath();
 		texture = new Texture2d(Graphics.loadTexture(path), path);
 		if(texture.getTexture() != null) { font.setTexture(texture); } else { System.exit(0); }
-
-		em.getEntity("Binoculars").spriteSheet = tileSheet;	//Todo: integrate into entities system
-		em.getEntity("Binoculars").am.addFrameToAnimation("idle", new Vector2f(0, 96), -1);
-		
-		em.getEntity("Ladder").spriteSheet = tileSheet;	//Todo: integrate into entities system
-		em.getEntity("Binoculars").am.addFrameToAnimation("idle", new Vector2f(0, 0), -1);
-		
 		
 		path = "res/testbg2.png";
 		levelBackground = new Texture2d(Graphics.loadTexture(path), path);
@@ -303,19 +295,19 @@ public class LWJGLPlatformer extends Game {
 				playerTarget.x = GameMouse.getPosition().scale(1f/scale).x;
 			} else {
 				//if the mouse is not free, set our current position as target
-				playerTarget.x = em.getEntity("player").quad.topleft.x;
+				playerTarget.x = em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x;
 			}
 		}
 		
-		if(Math.abs(em.getEntity("player").quad.topleft.x - playerTarget.x) > 1) {
-			em.getEntity("player").spriteSheet.xflip = GameMouse.getPosition().scale(1f/scale).x < em.getEntity("player").quad.topleft.x;
+		if(Math.abs(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x - playerTarget.x) > 1) {
+			em.getEntity("player").graphics.setxflip(GameMouse.getPosition().scale(1f/scale).x < em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x);
 			
-			Vector2f preMove = getGridPosition(em.getEntity("player").quad.topleft);
-			em.getEntity("player").quad.move(new Vector2f(((em.getEntity("player").quad.topleft.x > playerTarget.x) ? -1 : 1)*dt*tileSize.x/250f, 0));
-			Vector2f postMove = getGridPosition(em.getEntity("player").quad.topleft);
+			Vector2f preMove = getGridPosition(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
+			em.getEntity("player").quad.move(new Vector2f(((em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x > playerTarget.x) ? -1 : 1)*dt*tileSize.x/250f, 0));
+			Vector2f postMove = getGridPosition(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
 			
 			if(preMove.x != postMove.x || preMove.y != postMove.y) {
-				em.getEntity("player").logicalPosition = getGridPosition(em.getEntity("player").quad.topleft);
+				em.getEntity("player").logicalPosition = getGridPosition(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
 				
 				currentScreen.getActiveTiles().remove(em.getEntity("player").currentTileSlot);
 				currentScreen.getAt(preMove).entities.remove(em.getEntity("player"));
@@ -363,13 +355,13 @@ public class LWJGLPlatformer extends Game {
 		));
 		
 		/*
-		for(TileSlot t : currentScreen.activeTiles) {
+		for(TileSlot t : currentScreen.getActiveTiles()) {
 			drawCommands.add(new DrawQuadCall(
-				new Colour(1,0,0,1),
+				new Colour(1,0,0,1), null,
 				null,
 				new Quad(new Rectangle(t.position.scale(tileSize.x, tileSize.y), tileSize)),
 				scale,
-				3
+				3, null
 			));
 		}*/
 		//debugging, show active tiles
@@ -378,13 +370,13 @@ public class LWJGLPlatformer extends Game {
 			for (int y = 0; y < currentScreen.map[0].length; y++) {
 				for (Tile t : currentScreen.map[x][y].getTiles()) {
 					Vector2f v = t.tile;
-					Rectangle r = currentScreen.map[x][y].getSpriteSheet().getAt(v);
+					Rectangle r = currentScreen.map[x][y].parent.getFrame().getAt(v);
 					
 					if(t.xflip) r=r.xflip();
 					if(t.yflip) r=r.yflip();
 					
 					drawCommands.add(new DrawQuadCall(
-						currentScreen.map[x][y].getSpriteSheet().getTexture(), null, r,
+						currentScreen.map[x][y].parent.getFrame().getTexture(), null, r,
 						new Quad(new Rectangle(
 							currentScreen.map[x][y].position.scale(
 									currentScreen.tileSize.x,
@@ -397,25 +389,18 @@ public class LWJGLPlatformer extends Game {
 		
 		em.getEntity("player").am.Update(dt);
 		
-		float bump = 0; float bumpsPerSecond = 4;
-		if(em.getEntity("player").am.getAnimation() == "walking") { bump = 5f; }
-		
-		drawCommands.add(new DrawQuadCall(
-			em.getEntity("player").spriteSheet.getTexture(),
-			em.getEntity("player").am,
-			em.getEntity("player").spriteSheet.getTexCoords(em.getEntity("player").am),
-			em.getEntity("player").quad.offset(em.getEntity("player").quad.topright.
-					subtract(em.getEntity("player").quad.topleft).scale(-0.5f))
-					.offset(new Vector2f(0, -(float)Math.abs(Math.sin(Math.toRadians((180/(1000f/bumpsPerSecond))*em.getEntity("player").lifetime)))*bump)),
-			scale, em.getEntity("player").depth, null));
-		
+		/*float bump = 0; float bumpsPerSecond = 4;
+		if(em.getEntity("player").am.getAnimation() == "walking") { bump = 5f; }*/
+		/*
+		 * TODO:
+		 * Reimplement bumping (IMPORTANT)
+		 */
 
 		for(Entity e : em.getEntities().values()) {
-			if(!e.name.equals("player")) {
 			drawCommands.add(new DrawQuadCall(
-				tileSheet, e.am, e.spriteSheet.getAt(e.currentFrame),
+				e.graphics, e.am, e.graphics.getTexCoord(e.graphics.getTexture(), e.am)/*.getAt(e.currentFrame)*/,
 				e.quad, scale, e.depth, null));
-			}
+			
 		}
 		
 		if(contextMenu.getVisible()) {

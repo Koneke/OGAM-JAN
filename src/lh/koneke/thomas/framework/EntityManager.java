@@ -14,8 +14,9 @@ import lh.koneke.games.lwjglplatformer.Screen;
  * :name
  * look
  * x,y,depth,w,h
+ * texture
+ * .tha
  */
-
 
 public class EntityManager {
 	Map<String, Entity> entities;
@@ -28,6 +29,7 @@ public class EntityManager {
 	
 	public void load(String path) {
 		BufferedReader br;
+		System.out.println();
 		try {
 			br = new BufferedReader(new FileReader(path));
 			String name;
@@ -46,8 +48,7 @@ public class EntityManager {
 					if(line == 1) {
 						currentEntity.setLook(s);
 						line+=1;
-					}
-					else if(line == 2) {
+					} else if(line == 2) {
 						String[] coordinates = s.split(",");
 						x = Integer.parseInt(coordinates[0]);
 						y = Integer.parseInt(coordinates[1]);
@@ -58,10 +59,22 @@ public class EntityManager {
 						currentEntity.logicalPosition = new Vector2f(x,y);
 						currentEntity.depth = z;
 						currentEntity.size = new Vector2f(w,h);
-						
-						entities.put(currentEntity.getName(), currentEntity);
+
 						System.out.println("Loaded "+currentEntity.getName()+", look: \""+currentEntity.getLook()+"\".");
-						System.out.println(" - It is placed at "+x+","+y+" at depth "+z+", and it is "+w+" wide and "+h+" high.\n");
+						System.out.println(" - It is placed at "+x+","+y+" at depth "+z+", and it is "+w+" wide and "+h+" high.");
+						
+						line = 3;
+					} else if(line == 3) {
+						currentEntity.texturePath = s;
+						line = 4;
+					} else if(line == 4) {
+						currentEntity.thaPath = s;
+						line = 5;
+					}
+					if(line == 5) {
+						System.out.println(" - tex "+currentEntity.texturePath);
+						System.out.println(" - tha "+currentEntity.thaPath);
+						entities.put(currentEntity.getName().toLowerCase(), currentEntity);
 					}
 				}
 			}
@@ -81,13 +94,14 @@ public class EntityManager {
 						screen.getAt(e.logicalPosition.add(new Vector2f(x,y))).entities.add(e);
 					}
 				}
-				
 			}
+
+			System.out.println();
 		}
 	}
 	
 	public Entity getEntity(String name) {
-		return entities.get(name);
+		return entities.get(name.toLowerCase());
 	}
 
 	public Map<String, Entity> getEntities() {

@@ -67,10 +67,7 @@ public class Texture2d implements DrawingObject{
 			}
 		}
 		information.add(new TextureInformation(path, texture));
-		return true;/*
-		if(loadedTextures.containsValue(texture)) return false;
-		loadedTextures.put(path, texture);
-		return true;*/
+		return true;
 	}
 	
 	public static TextureInformation getLoaded(String path) {
@@ -79,7 +76,6 @@ public class Texture2d implements DrawingObject{
 				return ti;
 			}
 		}
-		//if(loadedTextures.containsKey(path)) return loadedTextures.get(path);
 		return null;
 	}
 }

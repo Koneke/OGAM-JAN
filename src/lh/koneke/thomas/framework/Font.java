@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import lh.koneke.thomas.graphics.SpriteSheet;
+import lh.koneke.thomas.graphics.Frame;
 
 public class Font {
 	public int characterWidth;
@@ -18,7 +18,7 @@ public class Font {
 	public int margin;
 	int spaceSize;
 	String path;
-	public SpriteSheet sheet;
+	public Frame sheet;
 	public Map<Character, Integer> specialWidth = new HashMap<Character, Integer>();
 	
 	public void setPath(String path) {
