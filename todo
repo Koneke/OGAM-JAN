@@ -4,7 +4,6 @@ Drawing tiled quads (like, if we want to fill a large area with the same tile, m
 Switching screen (level, room, whatever)
 Save TextDrawCalls from renderString in Text object, and only render if none is saved
 Render to texture (e.g. like parts of the screen we know won't change)
-Finish radio gui elements
 Map class relations and usage for structure overview, clean up, merge etc.
 Clean up context menus
 Globalize scale variable instead of passing it all the time
@@ -19,3 +18,4 @@ Check box gui
 Entity file format
 Rework getting graphics from entities
 Audio file listing file
+Finish radio gui elements

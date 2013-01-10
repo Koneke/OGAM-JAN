@@ -35,9 +35,10 @@ public class LWJGLPlatformer extends Game {
 	/* ~~~~~~~~~~ */
 	
 	EntityManager em;
+	SoundManager sm;
 	Vector2f playerTarget; //spot to move to
 	
-	Texture2d levelBackground;
+	Frame levelBackground;
 	Vector2f tileSize;
 	Frame tileSheet;
 	
@@ -45,15 +46,16 @@ public class LWJGLPlatformer extends Game {
 	
 	ContextMenu contextMenu;
 	ContextMenu actionMenu;
+	
 	List<String> commands = new ArrayList<String>();
 	Entity selectedEntity;
+	
 	boolean mouseFree = true;
 	
 	int hotswapFrequency = 1000; //time in ms for hotswap updating
 	int hotswapTimer = 0;
 	
 	Font f;
-	Frame font;
 	
 	String[] console;
 	
@@ -68,30 +70,11 @@ public class LWJGLPlatformer extends Game {
 	
 	public void initialize() {
 		sysInit();
-		font = new /*SpriteSheet(null, new Vector2f(0,0));*/Frame(null, null);
-		
-		f = new Font();
-		f.sheet = font;
 		
 		console = new String[3];
 		for(int i = 0; i < 3; i++){
 			console[i] = "";
 		}
-
-		tileSize = new Vector2f(32,32);
-		tileSheet = new Frame(null, new Vector2f(32,32));
-		currentScreen = new Screen(10, 8, tileSheet, tileSize, levelBackground);
-		
-		loadScreen(currentScreen);
-
-		sm = new SoundManager();
-		Game.sm.load("res/sounds.ths");
-		em = new EntityManager(currentScreen);
-		
-		f.load("res/font.thf");
-		em.load("res/entities.the");
-		
-		playerTarget = new Vector2f(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f))); //where the player is moving towards
 		
 		contextMenu = new ContextMenu(new Vector2f(0,0), 68);
 		contextMenu.setGraphics(new Colour(0.3f,0.3f,0.3f,1));
@@ -108,8 +91,22 @@ public class LWJGLPlatformer extends Game {
 	
 	public void load() {
 		Graphics.setInterpolationMode("none");
-		String path;
-		Texture2d texture;
+
+		tileSize = new Vector2f(32,32);
+		tileSheet = new Frame(null, new Vector2f(32,32));
+		levelBackground = new Frame(new Vector2f(0,0), screenSize);
+		
+		currentScreen = new Screen(10, 8, tileSheet, tileSize);
+		loadScreen(currentScreen);
+		
+		em = new EntityManager(currentScreen);
+		em.load("res/entities.the");
+		
+		sm = new SoundManager();
+		sm.load("res/sounds.ths");
+		AnimationManager.sm = sm;
+		
+		playerTarget = new Vector2f(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f))); //where the player is moving towards
 		
 		for(Entity e : em.getEntities().values()) {
 			e.graphics = new Frame(null, tileSize);
@@ -121,22 +118,13 @@ public class LWJGLPlatformer extends Game {
 			e.am.startAnimation("idle");
 		}
 
-		path = "res/testsheet2.png";
-		texture = new Texture2d(Graphics.loadTexture(path), path);
-		if(texture.getTexture() != null) { tileSheet.setTexture(texture); } else { System.exit(0); }
+		tileSheet.setTexture(new Texture2d(Graphics.loadTexture("res/testsheet2.png"), "res/testsheet2.png"));
+		levelBackground.setTexture(new Texture2d(Graphics.loadTexture("res/testbg2.png"), "res/testbg2.png"));
 		
-		path = f.getPath();
-		texture = new Texture2d(Graphics.loadTexture(path), path);
-		if(texture.getTexture() != null) { font.setTexture(texture); } else { System.exit(0); }
-		
-		path = "res/testbg2.png";
-		levelBackground = new Texture2d(Graphics.loadTexture(path), path);
-		if(levelBackground == null) { System.exit(0); }
-		
-		/* --- audio --- */
-		
-		//Game.sm.load("res/Randomize3.wav"); //is player with sm.play("Randomize3");
-		
+		f = new Font();
+		f.load("res/font.thf");
+		f.sheet = new Frame(null, null);
+		f.sheet.setTexture(/*texture*/new Texture2d(Graphics.loadTexture(f.getPath()), f.getPath()));
 	}
 	
 	public void loadScreen(/*String path,*/Screen screen) {
@@ -185,6 +173,8 @@ public class LWJGLPlatformer extends Game {
 		 * clean menu stuff
 		 */
 		if(GameMouse.right && !GameMouse.prevRight) {
+			sm.play("step");
+			
 			actionMenu.setVisible(false);
 			contextMenu.setVisible(true);
 			
@@ -221,6 +211,8 @@ public class LWJGLPlatformer extends Game {
 		}
 		
 		if(GameMouse.left && !GameMouse.prevLeft) {
+			sm.play("step");
+			
 			if(contextMenu.getVisible()) {
 				if(!contextMenu.getShape().containsPoint(GameMouse.getPosition().scale(1f/scale))) {
 					//clicked somewhere else, close and hide menu
@@ -339,8 +331,9 @@ public class LWJGLPlatformer extends Game {
 				ti.checkHotswap();
 			}
 			
+			levelBackground.getTexture().checkHotswap();
 			tileSheet.getTexture().checkHotswap();
-			font.getTexture().checkHotswap();
+			f.sheet.getTexture().checkHotswap();
 		}
 		
 		
@@ -371,13 +364,21 @@ public class LWJGLPlatformer extends Game {
 			for (int y = 0; y < currentScreen.map[0].length; y++) {
 				for (Tile t : currentScreen.map[x][y].getTiles()) {
 					Vector2f v = t.tile;
-					Rectangle r = currentScreen.map[x][y].parent.getFrame().getAt(v);
+					//Rectangle r = currentScreen.map[x][y].parent.getFrame().getAt(v);
+					try {
+					if((Frame)currentScreen.tileSheet == null) {
+						int a = 0;
+						System.out.println(a);
+					}
+					} catch (Exception e) { e.printStackTrace(); }
+					Rectangle r = ((Frame)currentScreen.tileSheet).getAt(v, tileSize);
 					
 					if(t.xflip) r=r.xflip();
 					if(t.yflip) r=r.yflip();
 					
 					drawCommands.add(new DrawQuadCall(
-						currentScreen.map[x][y].parent.getFrame().getTexture(), null, r,
+						((Frame)currentScreen.tileSheet)
+						/*currentScreen.map[x][y].parent.getFrame().getTexture()*/, null, r,
 						new Quad(new Rectangle(
 							currentScreen.map[x][y].position.scale(
 									currentScreen.tileSize.x,

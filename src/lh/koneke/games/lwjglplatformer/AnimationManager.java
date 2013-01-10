@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lh.koneke.thomas.framework.Game;
 import lh.koneke.thomas.framework.Rectangle;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.AnimationFrame;
@@ -31,6 +30,7 @@ public class AnimationManager {
 	private int currentFrame;
 	int timer; //ms passed
 	Vector2f frameSize = new Vector2f(32,32);
+	public static SoundManager sm;
 	
 	public void startAnimation(String animation) {
 		currentAnimation = animation;
@@ -58,7 +58,7 @@ public class AnimationManager {
 		
 		String sound = currentFrames.get(getCurrentFrame()).getSound();
 		if(sound != null) {
-			Game.sm.play(sound);
+			sm.play(sound);
 		}
 	}
 	
