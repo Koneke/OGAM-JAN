@@ -30,8 +30,6 @@ public class LWJGLPlatformer extends Game {
 	public static void main(String[] args) { LWJGLPlatformer game = new LWJGLPlatformer(); game.start(); }
 	
 	Vector2f screenSize;
-	float scale;
-	
 	Random random;
 	
 	/* ~~~~~~~~~~ */
@@ -66,8 +64,8 @@ public class LWJGLPlatformer extends Game {
 	
 	public void sysInit() {
 		screenSize = new Vector2f(320, 256);
-		scale = 3f;
-		setDisplay((int)(screenSize.x * scale), (int)(screenSize.y * scale));
+		Graphics.scale = 3f;
+		setDisplay((int)(screenSize.x * Graphics.scale), (int)(screenSize.y * Graphics.scale));
 		random = new Random();
 	}
 	
@@ -193,7 +191,7 @@ public class LWJGLPlatformer extends Game {
 			contextMenu.setVisible(true);
 			
 			//get tile clicked
-			Vector2f v = getGridPosition(GameMouse.getPosition().scale(1f/scale));
+			Vector2f v = getGridPosition(GameMouse.getPosition().scale(1f/Graphics.scale));
 			TileSlot tile = currentScreen.getAt(v);
 			contextMenu.tile = tile;
 
@@ -213,7 +211,7 @@ public class LWJGLPlatformer extends Game {
 			}
 
 			//shape and place the buttons
-			contextMenu.getShape().setPosition(GameMouse.getPosition().scale(1f/scale));
+			contextMenu.getShape().setPosition(GameMouse.getPosition().scale(1f/Graphics.scale));
 			float h = 2;
 			for(Button b : contextMenu.getItems()) {
 				b.getShape().x = contextMenu.getShape().x+1;
@@ -228,7 +226,7 @@ public class LWJGLPlatformer extends Game {
 			sm.play("step");
 			
 			if(contextMenu.getVisible()) {
-				if(!contextMenu.getShape().containsPoint(GameMouse.getPosition().scale(1f/scale))) {
+				if(!contextMenu.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
 					//clicked somewhere else, close and hide menu
 					contextMenu.setVisible(false);
 					mouseFree = true;
@@ -237,7 +235,7 @@ public class LWJGLPlatformer extends Game {
 					mouseFree = false;
 					
 					for(Button b : contextMenu.getItems()) {
-						if(b.getShape().containsPoint(GameMouse.getPosition().scale(1f/scale))) {
+						if(b.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
 							//the button b in the menu was clicked, select that item
 							selectedEntity = contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b));
 							
@@ -261,14 +259,14 @@ public class LWJGLPlatformer extends Game {
 					}
 				}
 			} else if(actionMenu.getVisible()) {
-				if(!contextMenu.getShape().containsPoint(GameMouse.getPosition().scale(1f/scale))) {
+				if(!contextMenu.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
 					actionMenu.setVisible(false);
 					mouseFree = true;
 				} else {
 					mouseFree = false;
 					
 					for(Button b : actionMenu.getItems()) {
-						if(b.getShape().containsPoint(GameMouse.getPosition().scale(1f/scale))) {
+						if(b.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
 							//get command
 							String command = commands.get(actionMenu.getItems().indexOf(b));
 							int c = command == "Look at" ? 1 : 0;
@@ -299,7 +297,7 @@ public class LWJGLPlatformer extends Game {
 		
 		if(mouseFree) {
 			if(GameMouse.left) {
-				playerTarget.x = GameMouse.getPosition().scale(1f/scale).x;
+				playerTarget.x = GameMouse.getPosition().scale(1f/Graphics.scale).x;
 			} else {
 				//if the mouse is not free, set our current position as target
 				playerTarget.x = em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x;
@@ -307,7 +305,7 @@ public class LWJGLPlatformer extends Game {
 		}
 		
 		if(Math.abs(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x - playerTarget.x) > 1) {
-			em.getEntity("player").graphics.setxflip(GameMouse.getPosition().scale(1f/scale).x < em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x);
+			em.getEntity("player").graphics.setxflip(GameMouse.getPosition().scale(1f/Graphics.scale).x < em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x);
 			
 			Vector2f preMove = getGridPosition(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
 			em.getEntity("player").quad.move(new Vector2f(((em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x > playerTarget.x) ? -1 : 1)*dt*tileSize.x/250f, 0));
@@ -357,7 +355,7 @@ public class LWJGLPlatformer extends Game {
 		drawCommands.add(new DrawQuadCall(
 			levelBackground, null, null,
 			new Quad(new Rectangle(new Vector2f(0,0), new Vector2f(512,256))),
-			scale, 10, null
+			/*Graphics.scale,*/ 10, null
 		));
 		
 		/*
@@ -388,7 +386,7 @@ public class LWJGLPlatformer extends Game {
 									currentScreen.tileSize.x,
 									currentScreen.tileSize.y),
 							currentScreen.tileSize)),
-						scale, t.depth, null));
+						/*Graphics.scale,*/ t.depth, null));
 				}
 			}
 		}
@@ -405,48 +403,47 @@ public class LWJGLPlatformer extends Game {
 		for(Entity e : em.getEntities().values()) {
 			drawCommands.add(new DrawQuadCall(
 				e.graphics, e.am, e.graphics.getTexCoord(e.graphics.getTexture(), e.am)/*.getAt(e.currentFrame)*/,
-				e.quad, scale, e.depth, null));
+				e.quad, /*Graphics.scale,*/ e.depth, null));
 		}
-		
 		
 		if(contextMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
 				contextMenu.getGraphics(), null, null,
-				new Quad(contextMenu.getShape()), scale, -10, null));
+				new Quad(contextMenu.getShape()), /*Graphics.scale,*/ -10, null));
 			
 			for(Button b : contextMenu.getItems()) {
 				drawCommands.add(new DrawQuadCall(
 					new Colour(0.5f,0.5f,0.5f,1), null, null,
-					new Quad(b.getShape()), scale, -11, null));
+					new Quad(b.getShape()), /*Graphics.scale,*/ -11, null));
 				drawCommands.addAll(Text.renderString(
 					contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b)).name,
-					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12, null).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1,1)), /*Graphics.scale,*/ -12, null).calls);
 			}
 		}
 		
 		if(actionMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
 				actionMenu.getGraphics(), null, null,
-				new Quad(actionMenu.getShape()), scale, -10, null));
+				new Quad(actionMenu.getShape()), /*Graphics.scale,*/ -10, null));
 			
 			for(Button b : actionMenu.getItems()) {
 				drawCommands.add(new DrawQuadCall(
 					new Colour(0.5f,0.5f,0.5f,1), null, null,
-					new Quad(b.getShape()), scale, -11, null));
+					new Quad(b.getShape()), /*Graphics.scale,*/ -11, null));
 				drawCommands.addAll(Text.renderString(
 					commands.get(actionMenu.getItems().indexOf(b)),
-					f, b.getShape().getPosition().add(new Vector2f(1,1)), scale, -12, null).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1,1)), /*Graphics.scale,*/ -12, null).calls);
 			}
 		}
 		
-		drawCommands.addAll(Text.renderString(
+		/*drawCommands.addAll(Text.renderString(
 				"ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuwxyz...,,,'''???!!!",
-				f, new Vector2f(0,0), scale, -10, new Colour(1,0,0,1)).calls);
+				f, new Vector2f(0,0), Graphics.scale, -10, new Colour(1,0,0,1)).calls);*/
 		//debugging, draw alphabet
 		
 		for(int i = 0;i<3;i++) {
 			drawCommands.addAll(Text.renderString(
-				console[i], f, new Vector2f(2,f.characterHeight*i), scale, -10, new Colour(0,0,0,1)).calls);
+				console[i], f, new Vector2f(2,f.characterHeight*i), /*Graphics.scale,*/ -10, new Colour(0,0,0,1)).calls);
 		}
 		
 		/*Sort and run calls*/
@@ -462,7 +459,7 @@ public class LWJGLPlatformer extends Game {
 			if(dqc.getColour() != null) {
 				GL11.glColor4f(dqc.getColour().getRed(), dqc.getColour().getGreen(), dqc.getColour().getBlue(), dqc.getColour().getAlpha());
 			}
-			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad(), dqc.getScale());
+			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad()/*, dqc.getScale()*/);
 		}
 	}
 }

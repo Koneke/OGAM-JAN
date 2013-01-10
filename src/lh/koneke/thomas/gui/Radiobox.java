@@ -50,7 +50,7 @@ public class Radiobox extends GuiBase {
 			getGraphics(), null,
 			null,
 			new Quad(getShape()),
-			scale, depth, null
+			/*scale,*/ depth, null
 		);
 	}
 

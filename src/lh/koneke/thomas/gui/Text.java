@@ -21,7 +21,7 @@ public class Text {
 		this.string = string;
 	}
 	
-	public static TextDrawCalls renderString(String string, Font font, Vector2f position, float scale, int depth, Colour C) {
+	public static TextDrawCalls renderString(String string, Font font, Vector2f position,/* float scale,*/ int depth, Colour C) {
 		TextDrawCalls tdc = new TextDrawCalls();
 		List<DrawQuadCall> calls = new ArrayList<DrawQuadCall>();
 		
@@ -66,7 +66,7 @@ public class Text {
 					charPosition,
 					charSize),
 				new Quad(new Rectangle(position.add(new Vector2f(w,0)), charSize)),
-				scale,
+				/*scale,*/
 				depth, C));
 			
 			w+=charSize.x+1;

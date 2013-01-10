@@ -45,7 +45,7 @@ public class Game {
 		}
 	}
 	
-	public void drawQuad(DrawingObject d, AnimationManager am, Rectangle source, Quad Q, Float scale) {
+	public void drawQuad(DrawingObject d, AnimationManager am, Rectangle source, Quad Q/*, Float scale*/) {
 		if(d instanceof Texture2d) {
 			Texture2d texture = (Texture2d)d;
 			texture.Bind();
@@ -63,12 +63,14 @@ public class Game {
 			}
 		}
 		
-		float Scale;
+		/*float Scale;
 		if (scale == null) { 
 			Scale = 1;
 		} else {
 			Scale = scale;
-		}
+		}*/
+
+		float Scale = Graphics.scale;
 		
 		GL11.glBegin(GL11.GL_QUADS);
 			GL11.glTexCoord2f(
