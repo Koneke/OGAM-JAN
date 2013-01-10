@@ -30,7 +30,6 @@ public class LWJGLPlatformer extends Game {
 	public static void main(String[] args) { LWJGLPlatformer game = new LWJGLPlatformer(); game.start(); }
 	
 	Vector2f screenSize;
-	Random random;
 	
 	/* ~~~~~~~~~~ */
 	
@@ -113,7 +112,8 @@ public class LWJGLPlatformer extends Game {
 		unloadedFrames.add(levelBackground);
 		
 		currentScreen = new Screen(10, 8, tileSheet, tileSize);
-		loadScreen(currentScreen);
+		//loadScreen(currentScreen);
+		currentScreen.load("res/screen.thl");
 		
 		em = new EntityManager(currentScreen);
 		em.load("res/entities.the");
@@ -142,22 +142,47 @@ public class LWJGLPlatformer extends Game {
 	public void loadScreen(/*String path,*/Screen screen) {
 		//load from file in the future
 		
+		/* screen size in squares
+		 * tilesize w,h
+		 */
+		
 		screen.map[7][2].addTile(new Tile(new Vector2f(0,0), true));
 		screen.map[5][2].addTile(new Tile(new Vector2f(0,0)));
 		screen.map[6][2].addTile(new Tile(new Vector2f(32,0)));
+		
+		/* 7,2 0,0 x
+		 * 5,2 0,0
+		 * 6,2 1,0
+		 */
 		
 		screen.map[5][3].addTile(new Tile(new Vector2f(0,32)));
 		screen.map[7][3].addTile(new Tile(new Vector2f(0,32), true));
 		screen.map[6][3].addTile(new Tile(new Vector2f(64,0),2)); //backpart of watchtower at depth 2
 		screen.map[6][3].addTile(new Tile(new Vector2f(32,32)));
 		
+		/* 5,3 0,1
+		 * 7,3 0,1 x
+		 * 6,3,2 2,0
+		 * 6,3 1,1
+		 */
+		
 		screen.map[5][4].addTile(new Tile(new Vector2f(64,96)));
 		screen.map[6][4].addTile(new Tile(new Vector2f(32,64)));
 		screen.map[7][4].addTile(new Tile(new Vector2f(64,32)));
 		
+		/* 5,4 2,3
+		 * 6,4 1,2
+		 * 7,4 2,1
+		 */
+		
 		screen.map[5][5].addTile(new Tile(new Vector2f(0,64)));
 		screen.map[6][5].addTile(new Tile(new Vector2f(32,96)));
 		screen.map[7][5].addTile(new Tile(new Vector2f(64,64)));
+		
+		/* 5,5 0,2
+		 * 6,5 1,3
+		 * 7,5 2,2
+		 */
 		
 		for(int x = 0; x < screen.map.length-3; x++) {
 			screen.map[x][7].addTile(new Tile(new Vector2f(96,96)));
@@ -165,10 +190,22 @@ public class LWJGLPlatformer extends Game {
 			screen.map[x][5].addTile(new Tile(new Vector2f(random.nextInt(4)*32,128)));
 		}
 		
+		/* 0-w,7 3,3
+		 * 0-w,6 3,2
+		 * 0-w,5 0-3,4
+		 */
+		
 		screen.map[7][6].addTile(new Tile(new Vector2f(128,64)));
 		screen.map[7][7].addTile(new Tile(new Vector2f(96,96)));
 		screen.map[8][7].addTile(new Tile(new Vector2f(160,64)));
 		screen.map[8][6].addTile(new Tile(new Vector2f(random.nextInt(2)*32,160)));
+		
+		/* 7,6 4,2
+		 * 7,7 3,3
+		 * 8,7 5,2
+		 * 8,6 0-2,5
+		 */
+		
 	}
 	
 	public Vector2f getGridPosition(Vector2f position) {
@@ -269,7 +306,7 @@ public class LWJGLPlatformer extends Game {
 						if(b.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
 							//get command
 							String command = commands.get(actionMenu.getItems().indexOf(b));
-							int c = command == "Look at" ? 1 : 0;
+							int c = command == "Look at" ? 1 : 0; //support for 1.7- versions of java, so don't switch on string
 							//handle command
 							switch(c) {
 								case 1:
@@ -355,7 +392,7 @@ public class LWJGLPlatformer extends Game {
 		drawCommands.add(new DrawQuadCall(
 			levelBackground, null, null,
 			new Quad(new Rectangle(new Vector2f(0,0), new Vector2f(512,256))),
-			/*Graphics.scale,*/ 10, null
+			10, null
 		));
 		
 		/*
@@ -386,7 +423,7 @@ public class LWJGLPlatformer extends Game {
 									currentScreen.tileSize.x,
 									currentScreen.tileSize.y),
 							currentScreen.tileSize)),
-						/*Graphics.scale,*/ t.depth, null));
+						t.depth, null));
 				}
 			}
 		}
@@ -402,37 +439,37 @@ public class LWJGLPlatformer extends Game {
 
 		for(Entity e : em.getEntities().values()) {
 			drawCommands.add(new DrawQuadCall(
-				e.graphics, e.am, e.graphics.getTexCoord(e.graphics.getTexture(), e.am)/*.getAt(e.currentFrame)*/,
-				e.quad, /*Graphics.scale,*/ e.depth, null));
+				e.graphics, e.am, e.graphics.getTexCoord(e.graphics.getTexture(), e.am),
+				e.quad, e.depth, null));
 		}
 		
 		if(contextMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
 				contextMenu.getGraphics(), null, null,
-				new Quad(contextMenu.getShape()), /*Graphics.scale,*/ -10, null));
+				new Quad(contextMenu.getShape()), -10, null));
 			
 			for(Button b : contextMenu.getItems()) {
 				drawCommands.add(new DrawQuadCall(
 					new Colour(0.5f,0.5f,0.5f,1), null, null,
-					new Quad(b.getShape()), /*Graphics.scale,*/ -11, null));
+					new Quad(b.getShape()), -11, null));
 				drawCommands.addAll(Text.renderString(
 					contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b)).name,
-					f, b.getShape().getPosition().add(new Vector2f(1,1)), /*Graphics.scale,*/ -12, null).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1,1)), -12, null).calls);
 			}
 		}
 		
 		if(actionMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
 				actionMenu.getGraphics(), null, null,
-				new Quad(actionMenu.getShape()), /*Graphics.scale,*/ -10, null));
+				new Quad(actionMenu.getShape()), -10, null));
 			
 			for(Button b : actionMenu.getItems()) {
 				drawCommands.add(new DrawQuadCall(
 					new Colour(0.5f,0.5f,0.5f,1), null, null,
-					new Quad(b.getShape()), /*Graphics.scale,*/ -11, null));
+					new Quad(b.getShape()), -11, null));
 				drawCommands.addAll(Text.renderString(
 					commands.get(actionMenu.getItems().indexOf(b)),
-					f, b.getShape().getPosition().add(new Vector2f(1,1)), /*Graphics.scale,*/ -12, null).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1,1)), -12, null).calls);
 			}
 		}
 		
@@ -443,7 +480,7 @@ public class LWJGLPlatformer extends Game {
 		
 		for(int i = 0;i<3;i++) {
 			drawCommands.addAll(Text.renderString(
-				console[i], f, new Vector2f(2,f.characterHeight*i), /*Graphics.scale,*/ -10, new Colour(0,0,0,1)).calls);
+				console[i], f, new Vector2f(2,f.characterHeight*i), -10, new Colour(0,0,0,1)).calls);
 		}
 		
 		/*Sort and run calls*/
@@ -459,7 +496,7 @@ public class LWJGLPlatformer extends Game {
 			if(dqc.getColour() != null) {
 				GL11.glColor4f(dqc.getColour().getRed(), dqc.getColour().getGreen(), dqc.getColour().getBlue(), dqc.getColour().getAlpha());
 			}
-			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad()/*, dqc.getScale()*/);
+			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad());
 		}
 	}
 }

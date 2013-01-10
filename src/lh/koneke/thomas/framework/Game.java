@@ -1,5 +1,7 @@
 package lh.koneke.thomas.framework;
 
+import java.util.Random;
+
 import lh.koneke.games.lwjglplatformer.AnimationManager;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawingObject;
@@ -19,6 +21,8 @@ public class Game {
 	
 	public int dt;
 	public Vector2f mousePosition;
+
+	public static Random random = new Random();
 	
 	public Time t;
 	
