@@ -35,7 +35,8 @@ public class AnimationManager {
 	public void startAnimation(String animation) {
 		currentAnimation = animation;
 		setCurrentFrames(animations.get(animation));
-		setCurrentFrame(0);
+		setCurrentFrame(-1);
+		advance();
 		timer = 0;
 	}
 	
@@ -128,5 +129,6 @@ public class AnimationManager {
 	/*
 	public float hate() {
 		return 387.44f; //million miles;
-	}*/
+	}
+	*/
 }

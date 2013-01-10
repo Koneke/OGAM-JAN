@@ -10,8 +10,7 @@ Clean up context menus
 Globalize scale variable instead of passing it all the time
 Console write function (small, but saves repetition)
 Sound panning
-Audio file listing file
-Non-alpha character font support
+Non-alphabetical character font support
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)
@@ -19,3 +18,4 @@ Coloured text (not restricted to text)
 Check box gui
 Entity file format
 Rework getting graphics from entities
+Audio file listing file

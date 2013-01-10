@@ -85,6 +85,7 @@ public class LWJGLPlatformer extends Game {
 		loadScreen(currentScreen);
 
 		sm = new SoundManager();
+		Game.sm.load("res/sounds.ths");
 		em = new EntityManager(currentScreen);
 		
 		f.load("res/font.thf");
@@ -134,7 +135,7 @@ public class LWJGLPlatformer extends Game {
 		
 		/* --- audio --- */
 		
-		Game.sm.load("res/Randomize3.wav"); //is player with sm.play("Randomize3");
+		//Game.sm.load("res/Randomize3.wav"); //is player with sm.play("Randomize3");
 		
 	}
 	
@@ -264,10 +265,10 @@ public class LWJGLPlatformer extends Game {
 						if(b.getShape().containsPoint(GameMouse.getPosition().scale(1f/scale))) {
 							//get command
 							String command = commands.get(actionMenu.getItems().indexOf(b));
-							
+							int c = command == "Look at" ? 1 : 0;
 							//handle command
-							switch(command) {
-								case "Look at":
+							switch(c) {
+								case 1:
 									console[0] = console[1];
 									console[1] = console[2];
 									console[2] = selectedEntity.getLook();
