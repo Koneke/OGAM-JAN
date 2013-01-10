@@ -1,4 +1,4 @@
-package lh.koneke.games.lwjglplatformer;
+package lh.koneke.thomas.framework;
 
 import java.io.IOException;
 

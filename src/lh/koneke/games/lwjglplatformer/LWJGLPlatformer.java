@@ -15,8 +15,10 @@ import lh.koneke.thomas.framework.GameMouse;
 import lh.koneke.thomas.framework.Graphics;
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Rectangle;
+import lh.koneke.thomas.framework.SoundManager;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.Colour;
+import lh.koneke.thomas.graphics.DrawQuadCall;
 import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.Texture2d;
 import lh.koneke.thomas.graphics.TextureInformation;
@@ -38,9 +40,10 @@ public class LWJGLPlatformer extends Game {
 	SoundManager sm;
 	Vector2f playerTarget; //spot to move to
 	
+	List<Frame> unloadedFrames;
 	Frame levelBackground;
-	Vector2f tileSize;
 	Frame tileSheet;
+	Vector2f tileSize;
 	
 	Screen currentScreen;
 	
@@ -76,6 +79,8 @@ public class LWJGLPlatformer extends Game {
 			console[i] = "";
 		}
 		
+		unloadedFrames = new ArrayList<Frame>();
+		
 		contextMenu = new ContextMenu(new Vector2f(0,0), 68);
 		contextMenu.setGraphics(new Colour(0.3f,0.3f,0.3f,1));
 		
@@ -93,8 +98,21 @@ public class LWJGLPlatformer extends Game {
 		Graphics.setInterpolationMode("none");
 
 		tileSize = new Vector2f(32,32);
+
+		f = new Font();
+		f.load("res/font.thf");
+		f.sheet = new Frame(null, null);
+		f.sheet.texturePath = f.getPath();
+		
 		tileSheet = new Frame(null, new Vector2f(32,32));
+		tileSheet.texturePath = "res/testsheet2.png";
+		
 		levelBackground = new Frame(new Vector2f(0,0), screenSize);
+		levelBackground.texturePath = "res/testbg2.png";
+		
+		unloadedFrames.add(f.sheet);
+		unloadedFrames.add(tileSheet);
+		unloadedFrames.add(levelBackground);
 		
 		currentScreen = new Screen(10, 8, tileSheet, tileSize);
 		loadScreen(currentScreen);
@@ -118,13 +136,9 @@ public class LWJGLPlatformer extends Game {
 			e.am.startAnimation("idle");
 		}
 
-		tileSheet.setTexture(new Texture2d(Graphics.loadTexture("res/testsheet2.png"), "res/testsheet2.png"));
-		levelBackground.setTexture(new Texture2d(Graphics.loadTexture("res/testbg2.png"), "res/testbg2.png"));
-		
-		f = new Font();
-		f.load("res/font.thf");
-		f.sheet = new Frame(null, null);
-		f.sheet.setTexture(/*texture*/new Texture2d(Graphics.loadTexture(f.getPath()), f.getPath()));
+		for(Frame f : unloadedFrames) {
+			f.setTexture(new Texture2d(Graphics.loadTexture(f.texturePath), f.texturePath));
+		}
 	}
 	
 	public void loadScreen(/*String path,*/Screen screen) {
@@ -335,8 +349,6 @@ public class LWJGLPlatformer extends Game {
 			tileSheet.getTexture().checkHotswap();
 			f.sheet.getTexture().checkHotswap();
 		}
-		
-		
 	}
 	
 	public void draw() {
@@ -364,21 +376,13 @@ public class LWJGLPlatformer extends Game {
 			for (int y = 0; y < currentScreen.map[0].length; y++) {
 				for (Tile t : currentScreen.map[x][y].getTiles()) {
 					Vector2f v = t.tile;
-					//Rectangle r = currentScreen.map[x][y].parent.getFrame().getAt(v);
-					try {
-					if((Frame)currentScreen.tileSheet == null) {
-						int a = 0;
-						System.out.println(a);
-					}
-					} catch (Exception e) { e.printStackTrace(); }
 					Rectangle r = ((Frame)currentScreen.tileSheet).getAt(v, tileSize);
 					
 					if(t.xflip) r=r.xflip();
 					if(t.yflip) r=r.yflip();
 					
 					drawCommands.add(new DrawQuadCall(
-						((Frame)currentScreen.tileSheet)
-						/*currentScreen.map[x][y].parent.getFrame().getTexture()*/, null, r,
+						((Frame)currentScreen.tileSheet), null, r,
 						new Quad(new Rectangle(
 							currentScreen.map[x][y].position.scale(
 									currentScreen.tileSize.x,
@@ -402,8 +406,8 @@ public class LWJGLPlatformer extends Game {
 			drawCommands.add(new DrawQuadCall(
 				e.graphics, e.am, e.graphics.getTexCoord(e.graphics.getTexture(), e.am)/*.getAt(e.currentFrame)*/,
 				e.quad, scale, e.depth, null));
-			
 		}
+		
 		
 		if(contextMenu.getVisible()) {
 			drawCommands.add(new DrawQuadCall(
@@ -435,9 +439,9 @@ public class LWJGLPlatformer extends Game {
 			}
 		}
 		
-		/*drawCommands.addAll(Text.renderString(
-				"ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuwxyz",
-				f, new Vector2f(0,0), scale, -10, new Colour(1,0,0,1)).calls);*/
+		drawCommands.addAll(Text.renderString(
+				"ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuwxyz...,,,'''???!!!",
+				f, new Vector2f(0,0), scale, -10, new Colour(1,0,0,1)).calls);
 		//debugging, draw alphabet
 		
 		for(int i = 0;i<3;i++) {
@@ -449,16 +453,16 @@ public class LWJGLPlatformer extends Game {
 		
 		Collections.sort(drawCommands, new Comparator<DrawQuadCall>() {
 			public int compare(DrawQuadCall a, DrawQuadCall b) {
-				if (a.depth < b.depth) return -1;
-				if (a.depth > b.depth) return 1;
+				if (a.getDepth() < b.getDepth()) return -1;
+				if (a.getDepth() > b.getDepth()) return 1;
 				return 0; }});
 		Collections.reverse(drawCommands);
 		
 		for(DrawQuadCall dqc : drawCommands) {
-			if(dqc.c != null) {
-				GL11.glColor4f(dqc.c.getRed(), dqc.c.getGreen(), dqc.c.getBlue(), dqc.c.getAlpha());
+			if(dqc.getColour() != null) {
+				GL11.glColor4f(dqc.getColour().getRed(), dqc.getColour().getGreen(), dqc.getColour().getBlue(), dqc.getColour().getAlpha());
 			}
-			drawQuad(dqc.d, dqc.am, dqc.source, dqc.q, dqc.scale);
+			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad(), dqc.getScale());
 		}
 	}
 }

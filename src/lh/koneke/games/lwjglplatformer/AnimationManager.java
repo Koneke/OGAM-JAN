@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import lh.koneke.thomas.framework.Rectangle;
+import lh.koneke.thomas.framework.SoundManager;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.AnimationFrame;
 

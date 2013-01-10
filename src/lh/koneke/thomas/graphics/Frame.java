@@ -9,6 +9,7 @@ public class Frame implements DrawingObject, FrameGenerator {
 	public Vector2f frameSize = new Vector2f(32,32);
 	
 	Texture2d texture;
+	public String texturePath;
 
 	public boolean xflip = false;
 	public boolean yflip = false;

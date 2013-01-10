@@ -1,8 +1,8 @@
 package lh.koneke.thomas.gui;
 
-import lh.koneke.games.lwjglplatformer.DrawQuadCall;
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Rectangle;
+import lh.koneke.thomas.graphics.DrawQuadCall;
 import lh.koneke.thomas.graphics.DrawingObject;
 
 public class Radiobox extends GuiBase {

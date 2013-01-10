@@ -1,10 +1,11 @@
-package lh.koneke.games.lwjglplatformer;
+package lh.koneke.thomas.framework;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class SoundManager {
 	Map<String, SoundEffect> sounds = new HashMap<String, SoundEffect>();
