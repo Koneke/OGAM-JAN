@@ -1,5 +1,5 @@
 :idle
 0,0 250
 :walking
-32,0 250 step
-64,0 250 step
+1,0 250 step
+2,0 250 step

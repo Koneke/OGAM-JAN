@@ -19,7 +19,7 @@ public class Screen {
 	TileSlot[][] map;
 	Vector2f screenSize;
 	Vector2f mapSize;
-	private List<TileSlot> activeTiles; //needed?
+	private List<TileSlot> activeTiles;
 	Vector2f tileSize;
 	DrawingObject tileSheet;
 	Frame background;

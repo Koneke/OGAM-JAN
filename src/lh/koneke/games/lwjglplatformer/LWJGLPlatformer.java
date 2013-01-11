@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import lh.koneke.thomas.framework.EntityManager;
@@ -301,7 +302,11 @@ public class LWJGLPlatformer extends Game {
 			}
 		}
 		
-		em.getEntity("player").lifetime += dt;
+		for(Entity e : em.getEntities().values()) {
+			//em.getEntity("player").lifetime += dt;
+			e.lifetime += dt;
+		}
+		
 		hotswapTimer += dt;
 		if (hotswapTimer > hotswapFrequency) {
 			while (hotswapTimer > hotswapFrequency) {
@@ -360,7 +365,11 @@ public class LWJGLPlatformer extends Game {
 			}
 		}
 		
-		em.getEntity("player").am.Update(dt);
+		//em.getEntity("player").am.Update(dt);
+		for(Entity e : em.getEntities().values()) {
+			//em.getEntity("player").lifetime += dt;
+			e.am.Update(dt);
+		}
 		
 		/*float bump = 0; float bumpsPerSecond = 4;
 		if(em.getEntity("player").am.getAnimation() == "walking") { bump = 5f; }*/
@@ -407,7 +416,7 @@ public class LWJGLPlatformer extends Game {
 		
 		/*drawCommands.addAll(Text.renderString(
 				"ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuwxyz...,,,'''???!!!",
-				f, new Vector2f(0,0), Graphics.scale, -10, new Colour(1,0,0,1)).calls);*/
+				f, new Vector2f(0,0), -10, new Colour(1,0,0,1)).calls);*/
 		//debugging, draw alphabet
 		
 		for(int i = 0;i<3;i++) {
