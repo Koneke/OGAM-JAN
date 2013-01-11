@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import lh.koneke.thomas.framework.EntityManager;
@@ -113,7 +112,7 @@ public class LWJGLPlatformer extends Game {
 		unloadedFrames.add(tileSheet);
 		unloadedFrames.add(levelBackground);
 		
-		currentScreen = new Screen(10, 8, tileSheet, tileSize);
+		currentScreen = new Screen(/*10, 8, */tileSheet/*, tileSize*/);
 		currentScreen.load("res/screen.thl");
 		
 		em = new EntityManager(currentScreen);

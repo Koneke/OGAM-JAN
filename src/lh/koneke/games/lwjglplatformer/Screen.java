@@ -24,22 +24,9 @@ public class Screen {
 	DrawingObject tileSheet;
 	Frame background;
 	
-	public Screen(int w, int h, DrawingObject tileSheet, Vector2f tileSize) {
+	public Screen(DrawingObject tileSheet) {
 		this.tileSheet = tileSheet;
-		this.tileSize = tileSize;
-		
-		mapSize = new Vector2f(w, h);
-		screenSize = mapSize.scale(tileSize.x, tileSize.y);
-		map = new TileSlot[w][h];
 		setActiveTiles(new ArrayList<TileSlot>());
-		
-		for(int x = 0; x < map.length; x++) {
-			for(int y = 0; y < map[x].length; y++) {
-				map[x][y] = new TileSlot();
-				map[x][y].position = new Vector2f(x, y);
-				map[x][y].parent = this;
-			}
-		}
 	}
 	
 	public void setBackground(Frame f) {
@@ -80,7 +67,17 @@ public class Screen {
 			Vector2f mapSize = new Vector2f(Integer.parseInt(s.split(",")[0]), Integer.parseInt(s.split(",")[1]));
 			
 			s = br.readLine();
-			Vector2f tileSize = new Vector2f(Integer.parseInt(s.split(",")[0]), Integer.parseInt(s.split(",")[1]));
+			tileSize = new Vector2f(Integer.parseInt(s.split(",")[0]), Integer.parseInt(s.split(",")[1]));
+			
+			map = new TileSlot[mapSize.intx()][mapSize.inty()];
+			
+			for(int x = 0; x < map.length; x++) {
+				for(int y = 0; y < map[x].length; y++) {
+					map[x][y] = new TileSlot();
+					map[x][y].position = new Vector2f(x, y);
+					map[x][y].parent = this;
+				}
+			}
 			
 			/* body */
 			while((s = br.readLine()) != null) {
@@ -133,6 +130,8 @@ public class Screen {
 						yflip = true;
 					}
 				}
+				
+				/* exec */
 				
 				for(int x = xfirst; x<=xlast;x++) {
 					for(int y = yfirst; y<=ylast;y++) {

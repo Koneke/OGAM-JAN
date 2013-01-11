@@ -7,8 +7,8 @@ Map class relations and usage for structure overview, clean up, merge etc.
 Clean up context menus
 Console (not java console, ingame text, top left) write function (small, but saves repetition)
 Sound panning
-Non-alphabetical character font support
-mapsize, tilesheet, tilesize into .thl
+tilesheet into .thl
+multitilesheet screens
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)
@@ -20,3 +20,5 @@ Audio file listing file
 Finish radio gui elements
 Load screens from file
 Globalize scale variable instead of passing it all the time
+mapsize, tilesize into .thl
+Non-alphabetical character font support
