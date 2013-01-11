@@ -3,3 +3,4 @@ foo/
 devres/
 lib/
 *.bak
+*.swp
