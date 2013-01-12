@@ -27,7 +27,8 @@ import lh.koneke.thomas.gui.ContextMenu;
 import lh.koneke.thomas.gui.Text;
 
 public class LWJGLPlatformer extends Game {
-	public static void main(String[] args) { LWJGLPlatformer game = new LWJGLPlatformer(); game.start(); }
+	public static void main(String[] args) {
+		LWJGLPlatformer game = new LWJGLPlatformer(); game.start(); }
 	
 	Vector2f screenSize;
 	
@@ -71,11 +72,13 @@ public class LWJGLPlatformer extends Game {
 	public void initialize() {
 		sysInit();
 		
-		console = new String[3];
+		console = new String[3];/*
 		for(int i = 0; i < 3; i++){
 			console[i] = "";
-		}
-		console[0] = "Thomas the Game Engine, early alpha. github.com/Koneke";
+		}*/
+		console[0] = "Thomas the Game Engine";
+		console[1] = "early alpha";
+		console[2] = "github.com/Koneke";
 		
 		unloadedFrames = new ArrayList<Frame>();
 		
@@ -94,7 +97,6 @@ public class LWJGLPlatformer extends Game {
 	
 	public void load() {
 		Graphics.setInterpolationMode("none");
-
 		tileSize = new Vector2f(32,32);
 
 		f = new Font();
@@ -115,15 +117,20 @@ public class LWJGLPlatformer extends Game {
 		currentScreen = new Screen(/*10, 8, */tileSheet/*, tileSize*/);
 		currentScreen.load("res/screen.thl");
 		
+		//load and spawn entities
 		em = new EntityManager(currentScreen);
 		em.load("res/entities.the");
 		
+		//load and setup sound
 		sm = new SoundManager();
 		sm.load("res/sounds.ths");
 		AnimationManager.sm = sm;
 		
-		playerTarget = new Vector2f(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f))); //where the player is moving towards
+		//where the player is moving towards
+		playerTarget = new Vector2f(em.getEntity("player").quad.topleft.add(
+				tileSize.scale(1/2f)));
 		
+		//setup the graphics of loaded entities
 		for(Entity e : em.getEntities().values()) {
 			e.graphics = new Frame(null, tileSize);
 			System.out.println("e loading "+e.texturePath);
@@ -139,8 +146,10 @@ public class LWJGLPlatformer extends Game {
 		}
 	}
 	
+	//helper function, returns the coordinates of the clicked grid square
 	public Vector2f getGridPosition(Vector2f position) {
-		Vector2f v = new Vector2f(position);
+		Vector2f v = new Vector2f(position); //copy so we don't alter the passed
+		
 		v.x -= v.x % tileSize.x;
 		v.y -= v.y % tileSize.y;
 		v = v.scale(1f/tileSize.x, 1f/tileSize.y);
@@ -152,117 +161,9 @@ public class LWJGLPlatformer extends Game {
 		 * TODO:
 		 * clean menu stuff
 		 */
-		if(GameMouse.right && !GameMouse.prevRight) {
-			sm.play("step");
-			
-			actionMenu.setVisible(false);
-			contextMenu.setVisible(true);
-			
-			//get tile clicked
-			Vector2f v = getGridPosition(GameMouse.getPosition().scale(1f/Graphics.scale));
-			TileSlot tile = currentScreen.getAt(v);
-			contextMenu.tile = tile;
 
-			//clear the menu, and add a button for each entity in the tile
-			contextMenu.clear();
-			int items = tile.entities.size();
-			for(int i = 0; i< items; i++) {
-				Button b = new Button(new Rectangle(
-					new Vector2f(contextMenu.getShape().getPosition().add(new Vector2f(1, 0))), new Vector2f(contextMenu.getShape().w-2,
-						f.characterHeight+2)),
-					null
-				);
-				if (b.getGraphics() == null) {
-					b.setGraphics(new Colour(1,1,1,1));
-				}
-				contextMenu.addItem(b);
-			}
+		handleContextMenus();
 
-			//shape and place the buttons
-			contextMenu.getShape().setPosition(GameMouse.getPosition().scale(1f/Graphics.scale));
-			float h = 2;
-			for(Button b : contextMenu.getItems()) {
-				b.getShape().x = contextMenu.getShape().x+1;
-				b.getShape().y = contextMenu.getShape().y+h;
-				h += b.getShape().h+2; //margin = 2
-			}
-			
-			contextMenu.getShape().h = h;
-		}
-		
-		if(GameMouse.left && !GameMouse.prevLeft) {
-			sm.play("step");
-			
-			if(contextMenu.getVisible()) {
-				if(!contextMenu.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
-					//clicked somewhere else, close and hide menu
-					contextMenu.setVisible(false);
-					mouseFree = true;
-				} else {
-					//menu has been clicked, lock the mouse so we can navigate it without moving the player
-					mouseFree = false;
-					
-					for(Button b : contextMenu.getItems()) {
-						if(b.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
-							//the button b in the menu was clicked, select that item
-							selectedEntity = contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b));
-							
-							//this menu is done, switch to the next one
-							contextMenu.setVisible(false);
-							actionMenu.getShape().setPosition(contextMenu.getShape().getPosition());
-							actionMenu.getShape().h = 4;
-							actionMenu.setVisible(true);
-							
-							float h = 2;
-							for(Button bb : actionMenu.getItems()) {
-								bb.getShape().x = actionMenu.getShape().x+1;
-								bb.getShape().y = actionMenu.getShape().y+h;
-								h += bb.getShape().h+2; //margin = 2
-							}
-							//place and shape the buttons
-							actionMenu.getShape().h = h;
-							
-							break;
-						}
-					}
-				}
-			} else if(actionMenu.getVisible()) {
-				if(!contextMenu.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
-					actionMenu.setVisible(false);
-					mouseFree = true;
-				} else {
-					mouseFree = false;
-					
-					for(Button b : actionMenu.getItems()) {
-						if(b.getShape().containsPoint(GameMouse.getPosition().scale(1f/Graphics.scale))) {
-							//get command
-							String command = commands.get(actionMenu.getItems().indexOf(b));
-							int c = command == "Look at" ? 1 : 0; //support for 1.7- versions of java, so don't switch on string
-							
-							//handle command
-							switch(c) {
-								case 1:
-									console[0] = console[1];
-									console[1] = console[2];
-									console[2] = selectedEntity.getLook();
-									break;
-								default:
-									console[0] = console[1];
-									console[1] = console[2];
-									console[2] = "Uh, what?";
-							}
-							
-							//action menu is done
-							actionMenu.setVisible(false);
-							break;
-						}
-					}
-				}
-			} else {
-				mouseFree = true;
-			}
-		}
-		
 		
 		if(mouseFree) {
 			if(GameMouse.left) {
@@ -273,15 +174,33 @@ public class LWJGLPlatformer extends Game {
 			}
 		}
 		
-		if(Math.abs(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x - playerTarget.x) > 1) {
-			em.getEntity("player").graphics.setxflip(GameMouse.getPosition().scale(1f/Graphics.scale).x < em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x);
+		//if distance from player center to player target > 1px
+		if(Math.abs(em.getEntity("player").quad.topleft.add(
+				tileSize.scale(1/2f)).x - playerTarget.x) > 1) {
 			
-			Vector2f preMove = getGridPosition(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
-			em.getEntity("player").quad.move(new Vector2f(((em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x > playerTarget.x) ? -1 : 1)*dt*tileSize.x/250f, 0));
-			Vector2f postMove = getGridPosition(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
+			//flip the player towards the target
+			em.getEntity("player").graphics.setxflip(
+				GameMouse.getPosition().scale(1f/Graphics.scale).x
+				< em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)).x);
 			
+			//get grid position pre moving
+			Vector2f preMove = getGridPosition(
+				em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
+
+			//move
+			em.getEntity("player").quad.move(
+				new Vector2f(((em.getEntity("player").quad.topleft.add(
+					tileSize.scale(1/2f)).x > playerTarget.x) ? -1 : 1)*dt*tileSize.x/250f, 0));
+			
+			//get grid position post moving
+			Vector2f postMove = getGridPosition(
+				em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
+			
+			//if we're in a new grid position, migrate to the new tile
 			if(preMove.x != postMove.x || preMove.y != postMove.y) {
-				em.getEntity("player").logicalPosition = getGridPosition(em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
+				
+				em.getEntity("player").logicalPosition = getGridPosition(
+						em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
 				
 				currentScreen.getActiveTiles().remove(em.getEntity("player").currentTileSlot);
 				currentScreen.getAt(preMove).entities.remove(em.getEntity("player"));
@@ -295,7 +214,10 @@ public class LWJGLPlatformer extends Game {
 			if(em.getEntity("player").am.getAnimation() != "walking") {
 				em.getEntity("player").am.startAnimation("walking");
 			}
-		} else {
+		}
+		
+		//player was not more than 1px away from its target, idling
+		else {
 			if(em.getEntity("player").am.getAnimation() != "idle") {
 				em.getEntity("player").am.startAnimation("idle");
 			}
@@ -319,6 +241,144 @@ public class LWJGLPlatformer extends Game {
 			levelBackground.getTexture().checkHotswap();
 			tileSheet.getTexture().checkHotswap();
 			f.sheet.getTexture().checkHotswap();
+			
+			//TODO: replace these three lines with looping through loaded tex instead
+		}
+	}
+
+	private void handleContextMenus() {
+		if(GameMouse.right && !GameMouse.prevRight) {
+			actionMenu.setVisible(false);
+			contextMenu.setVisible(true);
+			
+			//get tile clicked
+			Vector2f v = getGridPosition(GameMouse.getPosition().scale(1f/Graphics.scale));
+			TileSlot tile = currentScreen.getAt(v);
+			contextMenu.tile = tile;
+
+			//clear the menu and add a button for each entity in the tile
+			contextMenu.clear();
+			int items = tile.entities.size();
+			
+			for(int i = 0; i < items; i++) {
+				Button b = new Button(new Rectangle(
+					new Vector2f(contextMenu.getShape().getPosition().add(new Vector2f(1, 0))),
+					new Vector2f(contextMenu.getShape().w-2,
+						f.characterHeight+2)),
+					null
+				);
+				if (b.getGraphics() == null) {
+					b.setGraphics(new Colour(1,1,1,1));
+				}
+				contextMenu.addItem(b);
+			}
+
+			//shape and place the buttons
+			contextMenu.getShape().setPosition(GameMouse.getPosition().scale(1f/Graphics.scale));
+			float h = 2;
+			for(Button b : contextMenu.getItems()) {
+				b.getShape().x = contextMenu.getShape().x+1;
+				b.getShape().y = contextMenu.getShape().y+h;
+				h += b.getShape().h+2; //margin = 2
+			}
+			
+			contextMenu.getShape().h = h;
+		}
+		
+		if(GameMouse.left && !GameMouse.prevLeft) {
+			if(contextMenu.getVisible()) {
+				
+				if(!contextMenu.getShape().containsPoint(
+					GameMouse.getPosition().scale(1f/Graphics.scale))) {
+					
+					//clicked somewhere else, close and hide menu
+					contextMenu.setVisible(false);
+					mouseFree = true;
+				}
+				
+				else {
+					/* menu has been clicked, lock the mouse so we can navigate it
+					 * without moving the player
+					 */
+					mouseFree = false;
+					
+					for(Button b : contextMenu.getItems()) {
+						if(b.getShape().containsPoint(
+								GameMouse.getPosition().scale(1f/Graphics.scale))) {
+							//the button b in the menu was clicked, select that item
+							selectedEntity = contextMenu.tile.entities.get(
+									contextMenu.getItems().indexOf(b));
+							
+							//this menu is done, switch to the next one
+							contextMenu.setVisible(false);
+							actionMenu.getShape().setPosition(contextMenu.getShape().getPosition());
+							actionMenu.getShape().h = 4;
+							actionMenu.setVisible(true);
+							
+							float h = 2;
+							for(Button bb : actionMenu.getItems()) {
+								bb.getShape().x = actionMenu.getShape().x+1;
+								bb.getShape().y = actionMenu.getShape().y+h;
+								h += bb.getShape().h+2; //margin = 2
+							}
+							//place and shape the buttons
+							actionMenu.getShape().h = h;
+							
+							break;
+						}
+					}
+				}
+			}
+			
+			else if(actionMenu.getVisible()) {
+				
+				if(!actionMenu.getShape().containsPoint(
+					GameMouse.getPosition().scale(1f/Graphics.scale))) {
+					
+					actionMenu.setVisible(false);
+					mouseFree = true;
+				}
+				
+				else {
+					mouseFree = false;
+					
+					for(Button b : actionMenu.getItems()) {
+						if(b.getShape().containsPoint(
+					
+							GameMouse.getPosition().scale(1f/Graphics.scale))) {
+							
+							//get command
+							String command = commands.get(actionMenu.getItems().indexOf(b));
+							int c = command == "Look at" ? 1 : 0;
+							//earlier java versions can't switch on string
+							
+							//handle command
+							switch(c) {
+							
+								case 1:
+									console[0] = console[1];
+									console[1] = console[2];
+									console[2] = selectedEntity.getLook();
+									break;
+								default:
+									console[0] = console[1];
+									console[1] = console[2];
+									console[2] = "Uh, what?";
+							
+							}
+							
+							//action menu is done
+							actionMenu.setVisible(false);
+							break;
+						}
+					}
+				}
+			}
+			
+			//neither action nor context menu was visible
+			else {
+				mouseFree = true;
+			}
 		}
 	}
 	
@@ -327,7 +387,8 @@ public class LWJGLPlatformer extends Game {
 		
 		drawCommands.add(new DrawQuadCall(
 			levelBackground, null, null,
-			new Quad(new Rectangle(new Vector2f(0,0), new Vector2f(512,256))),
+			new Quad(new Rectangle(new Vector2f(0, 0), new Vector2f(512, 256))),
+			//TODO: Why does it need powers of two as size?
 			10, null
 		));
 		
@@ -383,33 +444,42 @@ public class LWJGLPlatformer extends Game {
 				e.quad, e.depth, null));
 		}
 		
+		//draw context menu
 		if(contextMenu.getVisible()) {
+		
 			drawCommands.add(new DrawQuadCall(
 				contextMenu.getGraphics(), null, null,
 				new Quad(contextMenu.getShape()), -10, null));
 			
 			for(Button b : contextMenu.getItems()) {
+				
 				drawCommands.add(new DrawQuadCall(
 					new Colour(0.5f,0.5f,0.5f,1), null, null,
 					new Quad(b.getShape()), -11, null));
+				
 				drawCommands.addAll(Text.renderString(
 					contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b)).name,
 					f, b.getShape().getPosition().add(new Vector2f(1,1)), -12, null).calls);
+				
 			}
 		}
 		
+		//draw action menu
 		if(actionMenu.getVisible()) {
+			
 			drawCommands.add(new DrawQuadCall(
 				actionMenu.getGraphics(), null, null,
 				new Quad(actionMenu.getShape()), -10, null));
 			
 			for(Button b : actionMenu.getItems()) {
+				
 				drawCommands.add(new DrawQuadCall(
-					new Colour(0.5f,0.5f,0.5f,1), null, null,
+					new Colour(0.5f, 0.5f, 0.5f, 1), null, null,
 					new Quad(b.getShape()), -11, null));
+				
 				drawCommands.addAll(Text.renderString(
 					commands.get(actionMenu.getItems().indexOf(b)),
-					f, b.getShape().getPosition().add(new Vector2f(1,1)), -12, null).calls);
+					f, b.getShape().getPosition().add(new Vector2f(1, 1)), -12, null).calls);
 			}
 		}
 		
@@ -420,7 +490,8 @@ public class LWJGLPlatformer extends Game {
 		
 		for(int i = 0;i<3;i++) {
 			drawCommands.addAll(Text.renderString(
-				console[i], f, new Vector2f(2,f.characterHeight*i), -10, new Colour(0,0,0,1)).calls);
+				console[i], f, new Vector2f(2,f.characterHeight*i),
+				-10, new Colour(0,0,0,1)).calls);
 		}
 		
 		/*Sort and run calls*/
@@ -434,7 +505,11 @@ public class LWJGLPlatformer extends Game {
 		
 		for(DrawQuadCall dqc : drawCommands) {
 			if(dqc.getColour() != null) {
-				GL11.glColor4f(dqc.getColour().getRed(), dqc.getColour().getGreen(), dqc.getColour().getBlue(), dqc.getColour().getAlpha());
+				GL11.glColor4f(
+					dqc.getColour().getRed(),
+					dqc.getColour().getGreen(),
+					dqc.getColour().getBlue(),
+					dqc.getColour().getAlpha());
 			}
 			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad());
 		}

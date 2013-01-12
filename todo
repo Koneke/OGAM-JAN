@@ -9,6 +9,7 @@ Console (not java console, ingame text, top left) write function (small, but sav
 Sound panning
 tilesheet into .thl
 multitilesheet screens
+coloured console text
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)
