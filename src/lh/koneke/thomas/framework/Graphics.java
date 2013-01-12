@@ -47,6 +47,11 @@ public class Graphics {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+			Game.die();
+			return null;
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			Game.die();
 			return null;
 		}
 	}

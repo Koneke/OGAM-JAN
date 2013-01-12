@@ -47,7 +47,13 @@ public class Font {
 				ptr += 2; 
 			}
 		}
-		catch (FileNotFoundException e) { e.printStackTrace(); }
-		catch (IOException e) { e.printStackTrace(); }
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			Game.die();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Game.die();
+		}
 	}
 }

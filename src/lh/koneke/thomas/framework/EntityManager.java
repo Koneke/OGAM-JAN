@@ -80,6 +80,7 @@ public class EntityManager {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			Game.die();
 		} finally {
 			//spawn entities
 			for (Entity e : entities.values()) {

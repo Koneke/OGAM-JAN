@@ -122,6 +122,15 @@ public class Game {
 		Display.destroy();
 	}
 	
+	public static void die() {
+		System.out.println();
+		System.out.println("SOMETHING WENT SOUR, DYING");
+		System.out.println();
+		AL.destroy();
+		Display.destroy();
+		System.exit(0);
+	}
+	
 	private void preInitialize() {
 		setDisplay(800, 600);
 		t = new Time();

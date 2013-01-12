@@ -101,6 +101,7 @@ public class AnimationManager {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			Game.die();
 		}
 	}
 

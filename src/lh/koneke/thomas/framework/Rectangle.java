@@ -22,10 +22,14 @@ public class Rectangle implements Shape {
 	}
 	
 	public Rectangle(Vector2f position, Vector2f size) {
-		this.x = position.x;
-		this.y = position.y;
-		this.w = size.x;
-		this.h = size.y;
+		if(position != null) {
+			this.x = position.x;
+			this.y = position.y;
+		}
+		if(size != null) {
+			this.w = size.x;
+			this.h = size.y;
+		}
 	}
 	
 	public Rectangle scaleSize(float xscale, float yscale) {
@@ -73,5 +77,13 @@ public class Rectangle implements Shape {
 	public void setPosition(Vector2f position) {
 		x = position.x;
 		y = position.y;
+	}
+	
+	public Vector2f getSize() {
+		return new Vector2f(w,h);
+	}
+	
+	public void setSize(int w, int h) {
+		this.setSize(w, h);
 	}
 }

@@ -23,6 +23,7 @@ public class Screen {
 	Vector2f tileSize;
 	DrawingObject tileSheet;
 	Frame background;
+	String texturePath;
 	
 	public Screen(DrawingObject tileSheet) {
 		this.tileSheet = tileSheet;
@@ -140,7 +141,13 @@ public class Screen {
 				}
 			}
 		}
-		catch (FileNotFoundException e) { e.printStackTrace(); }
-		catch (IOException e) { e.printStackTrace(); }
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			Game.die();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Game.die();
+		}
 	}
 }

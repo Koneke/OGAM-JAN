@@ -32,6 +32,10 @@ public class SoundEffect {
 			return AudioLoader.getAudio(format.toUpperCase(), ResourceLoader.getResourceAsStream(path));
 		} catch (IOException e) {
 			e.printStackTrace();
+			Game.die();
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			Game.die();
 		}
 		return null;
 	}

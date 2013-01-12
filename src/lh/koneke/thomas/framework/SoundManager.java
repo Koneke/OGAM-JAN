@@ -24,6 +24,7 @@ public class SoundManager {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			Game.die();
 		}
 	}
 	
