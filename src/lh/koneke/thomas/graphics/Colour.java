@@ -35,4 +35,20 @@ public class Colour implements DrawingObject {
 	public float getAlpha() {
 		return a;
 	}
+	
+	public void setRed(float f) {
+		this.r = f;
+	}
+	
+	public void setGreen(float f) {
+		this.g = f;
+	}
+	
+	public void setBlue(float f) {
+		this.b = f;
+	}
+	
+	public void setAlpha(float f) {
+		this.a = f;
+	}
 }

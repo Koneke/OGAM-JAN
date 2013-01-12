@@ -25,8 +25,52 @@ public class Text {
 		TextDrawCalls tdc = new TextDrawCalls();
 		List<DrawQuadCall> calls = new ArrayList<DrawQuadCall>();
 		
+		Colour currentDrawingColour = C;
+		boolean colourSetup = false;
+		int setup = 0;
+		
 		int w = 0;
 		for(char c : string.toCharArray()) {
+			if(c == '@') {
+				colourSetup = true;
+				setup = 0;
+				continue;
+			}
+			if(colourSetup) {
+				if((c >= 48 && c <=57) || (c >= 97 && c <= 102) || (c >= 65 && c <= 70)) {
+					int value;
+					if(c >= 97) {
+						value = c - 87;
+					} else if (c >= 65) {
+						value = c - 55;
+					}
+					else { value = c - 48; }
+					
+					switch(setup) {
+					case 0:
+						currentDrawingColour.setRed(value/15f);
+						break;
+					case 1:
+						currentDrawingColour.setGreen(value/15f);
+						break;
+					case 2:
+						currentDrawingColour.setBlue(value/15f);
+						break;
+					case 3:
+						currentDrawingColour.setAlpha(value/15f);
+						colourSetup = false;
+						break;
+					}
+
+					setup += 1;
+				}
+				else {
+					System.exit(0);
+					//bad read, die
+				}
+				continue;
+			}
+			
 			if(c == ' ') {
 				w += 4;
 				continue;
@@ -69,7 +113,7 @@ public class Text {
 					charSize),
 				new Quad(new Rectangle(position.add(new Vector2f(w,0)), charSize)),
 				/*scale,*/
-				depth, C));
+				depth, new Colour(currentDrawingColour)));
 			
 			w+=charSize.x+1;
 		}

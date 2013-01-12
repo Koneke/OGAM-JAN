@@ -72,13 +72,10 @@ public class LWJGLPlatformer extends Game {
 	public void initialize() {
 		sysInit();
 		
-		console = new String[3];/*
-		for(int i = 0; i < 3; i++){
-			console[i] = "";
-		}*/
+		console = new String[3];
 		console[0] = "Thomas the Game Engine";
 		console[1] = "early alpha";
-		console[2] = "github.com/Koneke";
+		console[2] = "github.com/@F00FKoneke";
 		
 		unloadedFrames = new ArrayList<Frame>();
 		
@@ -356,14 +353,11 @@ public class LWJGLPlatformer extends Game {
 							switch(c) {
 							
 								case 1:
-									console[0] = console[1];
-									console[1] = console[2];
-									console[2] = selectedEntity.getLook();
+									consoleWrite(selectedEntity.getLook());
 									break;
+									
 								default:
-									console[0] = console[1];
-									console[1] = console[2];
-									console[2] = "Uh, what?";
+									consoleWrite("Uh, what?");
 							
 							}
 							
@@ -380,6 +374,12 @@ public class LWJGLPlatformer extends Game {
 				mouseFree = true;
 			}
 		}
+	}
+
+	private void consoleWrite(String s) {
+		console[0] = console[1];
+		console[1] = console[2];
+		console[2] = s;
 	}
 	
 	public void draw() {

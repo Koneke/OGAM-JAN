@@ -5,11 +5,9 @@ Save TextDrawCalls from renderString in Text object, and only render if none is 
 Render to texture (e.g. like parts of the screen we know won't change)
 Map class relations and usage for structure overview, clean up, merge etc.
 Clean up context menus
-Console (not java console, ingame text, top left) write function (small, but saves repetition)
 Sound panning
 tilesheet into .thl
 multitilesheet screens
-coloured console text
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)
@@ -23,3 +21,5 @@ Load screens from file
 Globalize scale variable instead of passing it all the time
 mapsize, tilesize into .thl
 Non-alphabetical character font support
+Console (not java console, ingame text, top left) write function (small, but saves repetition)
+coloured console text
