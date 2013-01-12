@@ -1,6 +1,6 @@
 package lh.koneke.thomas.graphics;
 
-import lh.koneke.games.lwjglplatformer.AnimationManager;
+import lh.koneke.thomas.framework.AnimationManager;
 import lh.koneke.thomas.framework.Rectangle;
 import lh.koneke.thomas.framework.Vector2f;
 
@@ -10,6 +10,7 @@ public class Frame implements DrawingObject, FrameGenerator {
 	
 	Texture2d texture;
 	public String texturePath;
+	public boolean visible = true;
 
 	public boolean xflip = false;
 	public boolean yflip = false;

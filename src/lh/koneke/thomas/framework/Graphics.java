@@ -11,7 +11,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class Graphics {
 	static String interpolationMode = "";
-	public static float scale;
+	public static float scale = 1;
 
 	public static void setInterpolationMode(String mode) {
 		interpolationMode = mode;

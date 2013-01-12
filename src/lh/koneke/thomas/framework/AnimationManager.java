@@ -1,4 +1,4 @@
-package lh.koneke.games.lwjglplatformer;
+package lh.koneke.thomas.framework;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lh.koneke.thomas.framework.Rectangle;
-import lh.koneke.thomas.framework.SoundManager;
-import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.AnimationFrame;
 
 

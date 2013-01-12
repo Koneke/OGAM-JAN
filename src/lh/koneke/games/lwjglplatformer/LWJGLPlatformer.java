@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import lh.koneke.thomas.framework.AnimationManager;
 import lh.koneke.thomas.framework.EntityManager;
 import lh.koneke.thomas.framework.Font;
 import lh.koneke.thomas.framework.Game;

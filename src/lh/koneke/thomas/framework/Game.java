@@ -2,7 +2,6 @@ package lh.koneke.thomas.framework;
 
 import java.util.Random;
 
-import lh.koneke.games.lwjglplatformer.AnimationManager;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawingObject;
 import lh.koneke.thomas.graphics.Frame;
@@ -61,18 +60,14 @@ public class Game {
 		}
 		if(d instanceof Frame) {
 			Frame f = (Frame)d;
+			if(!f.visible) {
+				return;
+			}
 			f.getTexture().Bind();
 			if(am != null) {
 				source = new Rectangle(f.getTexCoord(f.getTexture(), am));
 			}
 		}
-		
-		/*float Scale;
-		if (scale == null) { 
-			Scale = 1;
-		} else {
-			Scale = scale;
-		}*/
 
 		float Scale = Graphics.scale;
 		

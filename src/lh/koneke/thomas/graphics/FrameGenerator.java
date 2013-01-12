@@ -1,6 +1,6 @@
 package lh.koneke.thomas.graphics;
 
-import lh.koneke.games.lwjglplatformer.AnimationManager;
+import lh.koneke.thomas.framework.AnimationManager;
 import lh.koneke.thomas.framework.Rectangle;
 
 public interface FrameGenerator {

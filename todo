@@ -8,6 +8,10 @@ Clean up context menus
 Sound panning
 tilesheet into .thl
 multitilesheet screens
+nontexture graphics for frame
+frame.getShape
+more graceful crashing in general (catch more exceptions, you dummy)
+loopable sounds
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)

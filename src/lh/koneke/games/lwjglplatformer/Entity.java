@@ -1,5 +1,6 @@
 package lh.koneke.games.lwjglplatformer;
 
+import lh.koneke.thomas.framework.AnimationManager;
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.Frame;
