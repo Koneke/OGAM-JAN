@@ -35,8 +35,16 @@ public class SoundManager {
 		}
 	}
 
-	public void play(String sound, float volume) {
-		sounds.get(sound).play(volume, 1.0f);
+	public void play(String sound, float pitch, float gain) {
+		sounds.get(sound).play(pitch, gain);
+	}
+	
+	public void play(String sound, float pitch, float gain, boolean loop) {
+		sounds.get(sound).play(pitch, gain, loop);
+	}
+	
+	public void stop(String sound) {
+		sounds.get(sound).stop();
 	}
 	
 }

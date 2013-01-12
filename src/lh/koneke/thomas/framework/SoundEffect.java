@@ -17,8 +17,12 @@ public class SoundEffect {
 		file.playAsSoundEffect(1.0f, 1.0f, false);
 	}
 
-	public void play(float volume, float panning) {
-		file.playAsSoundEffect(volume, panning, false);
+	public void play(float pitch, float gain) {
+		file.playAsSoundEffect(pitch, gain, false);
+	}
+	
+	public void play(float pitch, float gain, boolean loop) {
+		file.playAsMusic(pitch, gain, loop);
 	}
 
 	public static Audio load(String path) {
@@ -30,6 +34,10 @@ public class SoundEffect {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void stop() {
+		file.stop();
 	}
 	
 }

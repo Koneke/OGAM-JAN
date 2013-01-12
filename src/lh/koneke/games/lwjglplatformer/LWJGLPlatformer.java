@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import lh.koneke.thomas.framework.AnimationManager;
@@ -65,7 +66,8 @@ public class LWJGLPlatformer extends Game {
 	
 	public void sysInit() {
 		screenSize = new Vector2f(320, 256);
-		Graphics.scale = 3f;
+		
+		Graphics.scale = 1f;
 		setDisplay((int)(screenSize.x * Graphics.scale), (int)(screenSize.y * Graphics.scale));
 		random = new Random();
 	}
