@@ -27,6 +27,10 @@ public class EntityManager {
 		this.screen = screen;
 	}
 	
+	public void switchScreen(Screen screen) {
+		this.screen = screen;
+	}
+	
 	public void load(String path) {
 		BufferedReader br;
 		System.out.println();

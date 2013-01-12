@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import lh.koneke.thomas.framework.AnimationManager;
@@ -47,6 +48,8 @@ public class LWJGLPlatformer extends Game {
 	Vector2f tileSize;
 
 	Screen currentScreen;
+	Screen firstScreen;
+	Screen testScreen;
 
 	ContextMenu contextMenu;
 	ContextMenu actionMenu;
@@ -93,8 +96,8 @@ public class LWJGLPlatformer extends Game {
 		
 		commands.add("Look at");
 		actionMenu.addItem(new Button(new Rectangle(
-				new Vector2f(0, 0),
-				new Vector2f(66, 15)), null));
+			new Vector2f(0, 0),
+			new Vector2f(66, 15)), null));
 	}
 
 	public void load() {
@@ -116,11 +119,16 @@ public class LWJGLPlatformer extends Game {
 		unloadedFrames.add(tileSheet);
 		unloadedFrames.add(levelBackground);
 
-		currentScreen = new Screen(tileSheet);
-		currentScreen.load("res/screen.thl");
-
+		firstScreen = new Screen(tileSheet);
+		firstScreen.load("res/screen.thl");
+		
+		testScreen = new Screen(tileSheet);
+		testScreen.load("res/test.thl");
+		
+		currentScreen = firstScreen;
+			
 		// load and spawn entities
-		em = new EntityManager(currentScreen);
+		em = new EntityManager(firstScreen);
 		em.load("res/entities.the");
 
 		// load and setup sound
@@ -137,15 +145,15 @@ public class LWJGLPlatformer extends Game {
 			e.graphics = new Frame(null, tileSize);
 			System.out.println("e loading " + e.texturePath);
 			e.graphics.setTexture(new Texture2d(
-					Graphics.loadTexture(e.texturePath), e.texturePath));
+				Graphics.loadTexture(e.texturePath), e.texturePath));
 			e.am.load(e.thaPath);
 			e.am.startAnimation("idle");
 		}
 
 		for (Frame f : unloadedFrames) {
 			f.setTexture(new Texture2d(
-					Graphics.loadTexture(f.texturePath),
-					f.texturePath));
+				Graphics.loadTexture(f.texturePath),
+				f.texturePath));
 		}
 	}
 
@@ -174,6 +182,18 @@ public class LWJGLPlatformer extends Game {
 				// if the mouse is not free, set our current position as target
 				playerTarget.x =
 					em.getEntity("player").quad.topleft.add(tileSize.scale(1 / 2f)).x;
+			}
+		}
+		
+		if (currentScreen == firstScreen) {
+			if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+				em.switchScreen(testScreen);
+				currentScreen = testScreen;
+			}
+		} else {
+			if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+				em.switchScreen(firstScreen);
+				currentScreen = firstScreen;
 			}
 		}
 

@@ -1,6 +1,5 @@
 Implement already designed screen editor
 Drawing tiled quads (like, if we want to fill a large area with the same tile, minimize the amount of draw calls)
-Switching screen (level, room, whatever)
 Save TextDrawCalls from renderString in Text object, and only render if none is saved
 Render to texture (e.g. like parts of the screen we know won't change)
 Map class relations and usage for structure overview, clean up, merge etc.
@@ -27,3 +26,4 @@ loopable sounds
 more graceful crashing in general (catch more exceptions, you dummy)
 nontexture graphics for frame
 frame.getShape
+Basic screen switching

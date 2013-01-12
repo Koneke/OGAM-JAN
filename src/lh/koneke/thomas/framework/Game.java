@@ -48,7 +48,7 @@ public class Game {
 		}
 	}
 	
-	public void drawQuad(DrawingObject d, AnimationManager am, Rectangle source, Quad Q/*, Float scale*/) {
+	public void drawQuad(DrawingObject d, AnimationManager am, Rectangle source, Quad Q) {
 		if(d instanceof Texture2d) {
 			Texture2d texture = (Texture2d)d;
 			texture.Bind();
