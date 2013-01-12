@@ -14,10 +14,17 @@ public class Colour implements DrawingObject {
 	}
 	
 	public Colour(Colour c) {
-		this.r = c.r;
-		this.g = c.g;
-		this.b = c.b;
-		this.a = c.a;
+		if (c == null) {
+			this.r = 1;
+			this.g = 1;
+			this.b = 1;
+			this.a = 1;
+			return;
+		}
+		this.r = c.getRed();
+		this.g = c.getGreen();
+		this.b = c.getBlue();
+		this.a = c.getAlpha();
 	}
 	
 	public float getRed() {
