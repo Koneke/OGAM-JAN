@@ -143,7 +143,7 @@ public class LWJGLPlatformer extends Game {
 		// setup the graphics of loaded entities
 		for (Entity e : em.getEntities().values()) {
 			e.graphics = new Frame(null, tileSize);
-			System.out.println("e loading " + e.texturePath);
+			//System.out.println("e loading " + e.texturePath);
 			e.graphics.setTexture(new Texture2d(
 				Graphics.loadTexture(e.texturePath), e.texturePath));
 			e.am.load(e.thaPath);
@@ -174,10 +174,7 @@ public class LWJGLPlatformer extends Game {
 
 		AnimationManager.counting = true;
 		handleContextMenus();
-		
-		if(GameMouse.right && ! GameMouse.prevRight) {
-		}
-
+			
 		if (mouseFree) {
 			if (GameMouse.left) {
 				playerTarget.x = GameMouse.getPosition().scale(
@@ -208,30 +205,30 @@ public class LWJGLPlatformer extends Game {
 			// flip the player towards the target
 			em.getEntity("player").graphics
 				.setxflip(GameMouse.getPosition()
-				.scale(1f / Graphics.scale).x < em
+				.scale(1f/Graphics.scale).x < em
 				.getEntity("player").quad.topleft.add(tileSize
-				.scale(1 / 2f)).x);
+				.scale(1/2f)).x);
 
 			// get grid position pre moving
 			Vector2f preMove = getGridPosition(em.getEntity("player").quad.topleft
-				.add(tileSize.scale(1 / 2f)));
+				.add(tileSize.scale(1/2f)));
 
 			// move
 			em.getEntity("player").quad.move(new Vector2f(((
 				em.getEntity("player").quad.topleft.add(
-					tileSize.scale(1 / 2f)).x > playerTarget.x) ? -1 : 1)
-					* dt * tileSize.x / 250f, 0));
+					tileSize.scale(1/2f)).x > playerTarget.x) ? -1 : 1)
+					* dt * tileSize.x/250f, 0));
 
 			// get grid position post moving
 			Vector2f postMove = getGridPosition(
-					em.getEntity("player").quad.topleft.add(tileSize.scale(1 / 2f)));
+					em.getEntity("player").quad.topleft.add(tileSize.scale(1/2f)));
 
 			// if we're in a new grid position, migrate to the new tile
 			if (preMove.x != postMove.x || preMove.y != postMove.y) {
 
 				em.getEntity("player").logicalPosition = getGridPosition(
 					em.getEntity("player").quad.topleft.add(
-						tileSize.scale(1 / 2f)));
+						tileSize.scale(1/2f)));
 
 				currentScreen.getActiveTiles().remove(
 						em.getEntity("player").currentTileSlot);
@@ -288,7 +285,7 @@ public class LWJGLPlatformer extends Game {
 
 			// get tile clicked
 			Vector2f v = getGridPosition(GameMouse.getPosition().scale(
-				1f / Graphics.scale));
+				1f/Graphics.scale));
 			TileSlot tile = currentScreen.getAt(v);
 			contextMenu.tile = tile;
 

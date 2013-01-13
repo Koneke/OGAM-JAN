@@ -16,17 +16,17 @@ public class TextureInformation {
 		this.texture = texture;
 		File f = new File(path);
 		lastModified = f.lastModified();
-		System.out.println("ti "+path);
+		//System.out.println("ti "+path);
 	}
 	
 	public void checkHotswap() {
 		File f = new File(path);
 		if (lastModified != f.lastModified()) {
-			System.out.println("Hotswap wanted for "+path);
+			//System.out.println("Hotswap wanted for "+path);
 			texture.release();
 			texture = Graphics.loadTexture(path, true);
 			this.lastModified = f.lastModified();
-			System.out.println("Loaded "+path+", last modified "+this.lastModified);
+			//System.out.println("Loaded "+path+", last modified "+this.lastModified);
 		}
 	}
 }

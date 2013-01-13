@@ -157,6 +157,7 @@ public class Game {
 		GameMouse.sety(Display.getHeight()-Mouse.getY());
 		GameMouse.left = Mouse.isButtonDown(0);
 		GameMouse.right = Mouse.isButtonDown(1);
+		GameMouse.wheel = Mouse.isButtonDown(2);
 	}
 	public void update() {} //to be overridden
 	private void postUpdate() {

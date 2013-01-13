@@ -107,7 +107,7 @@ public class AnimationManager {
 					} else { sound = null; }
 					
 					animations.get(readAnimation).add(new AnimationFrame(new Vector2f(x,y).scale(frameSize.x, frameSize.y), time, sound));
-					System.out.println("Added "+x+","+y+" (s "+sound+") to "+readAnimation);
+					//System.out.println("Added "+x+","+y+" (s "+sound+") to "+readAnimation);
 				}
 			}
 		} catch (IOException e) {

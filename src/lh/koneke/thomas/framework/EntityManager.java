@@ -36,7 +36,6 @@ public class EntityManager {
 	
 	public void load(String path) {
 		BufferedReader br;
-		System.out.println();
 		try {
 			br = new BufferedReader(new FileReader(path));
 			String name;
@@ -80,7 +79,6 @@ public class EntityManager {
 					}
 					if(line == 5) {
 						entities.put(currentEntity.getName().toLowerCase(), currentEntity);
-						entityPrototypes.put(currentEntity.getName().toLowerCase(), new Entity(currentEntity));
 					}
 				}
 			}
@@ -101,8 +99,9 @@ public class EntityManager {
 						screen.getAt(e.logicalPosition.add(new Vector2f(x,y))).entities.add(e);
 					}
 				}
+				
+				entityPrototypes.put(e.getName().toLowerCase(), e);
 			}
-			/*System.out.println();*/
 		}
 	}
 	
@@ -128,18 +127,19 @@ public class EntityManager {
 	}
 	
 	//add a new entity from a prototype
-	@SuppressWarnings("unused")
+	
 	public Entity addNew(String name) throws Exception {
-		if(true) throw new Exception("Not implemented");
+		//System.out.println(name.toLowerCase());
 		
-		System.out.println(name.toLowerCase());
 		Entity e = null;
+		
 		try {
 			if(entityPrototypes.containsKey(name.toLowerCase())) {
-				e = entities.get(name.toLowerCase());
-				if(e == null) return null;
 				
-				e = new Entity(e);
+				Entity boop = entityPrototypes.get(name.toLowerCase());
+				if(boop == null) { Game.die(); }
+				
+				e = new Entity(boop);
 				
 				e.quad = new Quad(
 					new Rectangle(e.logicalPosition.scale(screen.getTileSize().x,
@@ -154,7 +154,6 @@ public class EntityManager {
 				}
 				
 				entities.put(name.toLowerCase(), e);
-				System.out.println(entities.keySet().size());
 				
 				TileSlot t = 
 					screen.getAt(

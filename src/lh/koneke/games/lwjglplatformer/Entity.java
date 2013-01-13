@@ -1,6 +1,7 @@
 package lh.koneke.games.lwjglplatformer;
 
 import lh.koneke.thomas.framework.AnimationManager;
+import lh.koneke.thomas.framework.Game;
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.Frame;
@@ -36,6 +37,9 @@ public class Entity {
 	}
 	
 	public Entity(Entity e) {
+		if(e == null) {
+			Game.die(); }
+		
 		this.quad = e.quad;
 		this.graphics = e.graphics;
 		this.am = e.am;
@@ -49,7 +53,7 @@ public class Entity {
 		this.texturePath = e.texturePath;
 		this.thaPath = e.thaPath;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
