@@ -6,11 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import lh.koneke.thomas.framework.AnimationManager;
-import lh.koneke.thomas.framework.EntityManager;
 import lh.koneke.thomas.framework.Font;
 import lh.koneke.thomas.framework.Game;
 import lh.koneke.thomas.framework.GameMouse;
@@ -186,18 +184,6 @@ public class LWJGLPlatformer extends Game {
 			}
 		}
 		
-		if (currentScreen == firstScreen) {
-			if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
-				em.switchScreen(testScreen);
-				currentScreen = testScreen;
-			}
-		} else {
-			if(Keyboard.isKeyDown(Keyboard.KEY_E)) {
-				em.switchScreen(firstScreen);
-				currentScreen = firstScreen;
-			}
-		}
-
 		// if distance from player center to player target > 1px
 		if (Math.abs(em.getEntity("player").quad.topleft.add(
 				tileSize.scale(1 / 2f)).x - playerTarget.x) > 1) {

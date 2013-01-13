@@ -1,4 +1,4 @@
-package lh.koneke.thomas.framework;
+package lh.koneke.games.lwjglplatformer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import lh.koneke.games.lwjglplatformer.Entity;
-import lh.koneke.games.lwjglplatformer.Screen;
-import lh.koneke.games.lwjglplatformer.TileSlot;
+import lh.koneke.thomas.framework.Game;
+import lh.koneke.thomas.framework.Quad;
+import lh.koneke.thomas.framework.Rectangle;
+import lh.koneke.thomas.framework.Vector2f;
 
 
 /* entity

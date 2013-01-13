@@ -18,6 +18,9 @@ public class Frame implements DrawingObject, FrameGenerator {
 	public boolean xflip = false;
 	public boolean yflip = false;
 	
+	public Frame(Rectangle r) {
+		this.rectangle = new Rectangle(r);
+	}
 	public Frame(Vector2f frame, Vector2f frameSize) {
 		//this.frame = frame;
 		//this.frameSize = frameSize;
