@@ -1,12 +1,8 @@
 package lh.koneke.games.lwjglplatformer;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-
-import org.lwjgl.opengl.GL11;
 
 import lh.koneke.thomas.framework.AnimationManager;
 import lh.koneke.thomas.framework.Font;
@@ -31,9 +27,9 @@ public class LWJGLPlatformer extends Game {
 		game.start();
 	}
 
-	Vector2f screenSize;
-
 	/* ~~~~~~~~~~ */
+	
+	Vector2f screenSize;
 
 	EntityManager em;
 	SoundManager sm;
@@ -46,7 +42,6 @@ public class LWJGLPlatformer extends Game {
 
 	Screen currentScreen;
 	Screen firstScreen;
-	Screen testScreen;
 
 	ContextMenu contextMenu;
 	ContextMenu actionMenu;
@@ -57,7 +52,6 @@ public class LWJGLPlatformer extends Game {
 	boolean mouseFree = true;
 
 	Font f;
-
 	String[] console;
 
 	/* ~~~~~~~~~~ */
@@ -113,9 +107,6 @@ public class LWJGLPlatformer extends Game {
 		firstScreen = new Screen(tileSheet);
 		firstScreen.load("res/screen.thl");
 		
-		testScreen = new Screen(tileSheet);
-		testScreen.load("res/test.thl");
-		
 		currentScreen = firstScreen;
 			
 		// load and spawn entities
@@ -150,12 +141,19 @@ public class LWJGLPlatformer extends Game {
 		v = v.scale(1f/tileSize.x, 1f/tileSize.y);
 		return v;
 	}
+	
+	public void moveEntity(Entity e, Vector2f newPosition) {
+		currentScreen.getActiveTiles().remove(e.currentTileSlot);
+		currentScreen.getAt(e.logicalPosition).entities.remove(e);
+		
+		e.logicalPosition = getGridPosition(newPosition);
+		e.currentTileSlot = currentScreen.getAt(e.logicalPosition);
+		
+		currentScreen.getActiveTiles().add(e.currentTileSlot);
+		currentScreen.getAt(e.logicalPosition).entities.add(e);
+	}
 
 	public void update() {
-		/*
-		 * TODO: clean menu stuff
-		 */
-
 		AnimationManager.counting = true;
 		handleContextMenus();
 			
@@ -197,22 +195,10 @@ public class LWJGLPlatformer extends Game {
 
 			// if we're in a new grid position, migrate to the new tile
 			if (preMove.x != postMove.x || preMove.y != postMove.y) {
-
-				em.getEntity("player").logicalPosition = getGridPosition(
+				moveEntity(
+					em.getEntity("player"),
 					em.getEntity("player").quad.topleft.add(
 						tileSize.scale(1/2f)));
-
-				currentScreen.getActiveTiles().remove(
-						em.getEntity("player").currentTileSlot);
-				currentScreen.getAt(preMove).entities.remove(
-						em.getEntity("player"));
-
-				em.getEntity("player").currentTileSlot = currentScreen.getAt(postMove);
-
-				currentScreen.getActiveTiles().add(
-						em.getEntity("player").currentTileSlot);
-				currentScreen.getAt(postMove).entities.add(
-						em.getEntity("player"));
 			}
 
 			if (em.getEntity("player").am.getAnimation() != "walking") {
@@ -281,7 +267,7 @@ public class LWJGLPlatformer extends Game {
 			if (contextMenu.getVisible()) {
 
 				if (!contextMenu.getShape().containsPoint(
-						GameMouse.getPosition().scale(1f/Graphics.scale))) {
+					GameMouse.getPosition().scale(1f/Graphics.scale))) {
 
 					// clicked somewhere else, close and hide menu
 					contextMenu.setVisible(false);
@@ -297,17 +283,17 @@ public class LWJGLPlatformer extends Game {
 
 					for (Button b : contextMenu.getItems()) {
 						if (b.getShape().containsPoint(
-								GameMouse.getPosition().scale(
-										1f/Graphics.scale))) {
+							GameMouse.getPosition().scale(
+								1f/Graphics.scale))) {
 							// the button b in the menu was clicked, select that
 							// item
 							selectedEntity = contextMenu.tile.entities
-									.get(contextMenu.getItems().indexOf(b));
+								.get(contextMenu.getItems().indexOf(b));
 
 							// this menu is done, switch to the next one
 							contextMenu.setVisible(false);
 							actionMenu.getShape().setPosition(
-									contextMenu.getShape().getPosition());
+								contextMenu.getShape().getPosition());
 							actionMenu.getShape().h = 4;
 							actionMenu.setVisible(true);
 
@@ -329,7 +315,7 @@ public class LWJGLPlatformer extends Game {
 			else if (actionMenu.getVisible()) {
 
 				if (!actionMenu.getShape().containsPoint(
-						GameMouse.getPosition().scale(1f / Graphics.scale))) {
+					GameMouse.getPosition().scale(1f / Graphics.scale))) {
 
 					actionMenu.setVisible(false);
 					mouseFree = true;
@@ -384,12 +370,9 @@ public class LWJGLPlatformer extends Game {
 	}
 
 	public void draw() {
-		List<DrawQuadCall> drawCommands = new ArrayList<DrawQuadCall>();
-
-		drawCommands.add(new DrawQuadCall(levelBackground, null, null,
-				new Quad(new Rectangle(new Vector2f(0, 0), new Vector2f(512, 256))),
-				// TODO: Why does it need powers of two as size?
-				10, null));
+		draw(new DrawQuadCall(levelBackground, null, null,
+			new Quad(new Rectangle(new Vector2f(0, 0), new Vector2f(512, 256))),
+			10, null));
 
 		/*
 		 * for(TileSlot t : currentScreen.getActiveTiles()) {
@@ -404,51 +387,36 @@ public class LWJGLPlatformer extends Game {
 				for (Tile t : currentScreen.map[x][y].getTiles()) {
 					
 					Quad Q = new Quad(new Rectangle(
-						currentScreen.map[x][y].position.scale(
-							currentScreen.tileSize.x,
-							currentScreen.tileSize.y),
+						currentScreen.map[x][y].position.scale(currentScreen.tileSize),
 						currentScreen.tileSize));
 					
 					if(tm.get(currentScreen.tileSheet.getPath())) {
 						Vector2f v = t.tile;
 						Rectangle r = ((Frame) currentScreen.tileSheet).getAt(v,tileSize);
 	
-						if (t.xflip)
-							r = r.xflip();
-						if (t.yflip)
-							r = r.yflip();
+						if (t.xflip) r = r.xflip();
+						if (t.yflip) r = r.yflip();
 	
-						drawCommands.add(new DrawQuadCall(
+						draw(new DrawQuadCall(
 							((Frame) currentScreen.tileSheet), null, r,
 							Q, t.depth, null));
 						
 					} else {
-						drawCommands.add(new DrawQuadCall(
+						draw(new DrawQuadCall(
 							new Colour(1,1,1,1), null, null,
 							Q, t.depth, null));
 						currentScreen.tileSheet = tm.load(tileSheet.texturePath);
-						//tm.loadLate(currentScreen.texturePath, currentScreen.tileSheet);
 					}
 				}
 			}
 		}
 
-		// em.getEntity("player").am.Update(dt);
 		for (Entity e : em.getEntities().values()) {
 			e.am.Update(dt);
 		}
 
-		/*
-		 * float bump = 0; float bumpsPerSecond = 4;
-		 * if(em.getEntity("player").am.getAnimation() == "walking") { bump =
-		 * 5f; }
-		 */
-		/*
-		 * TODO: Reimplement bumping (IMPORTANT)
-		 */
-
 		for (Entity e : em.getEntities().values()) {
-			drawCommands.add(new DrawQuadCall(e.graphics, e.am,
+			draw(new DrawQuadCall(e.graphics, e.am,
 				e.graphics.getTexCoord(e.graphics.getTexture(), e.am), e.quad,
 				e.depth, null));
 		}
@@ -456,34 +424,35 @@ public class LWJGLPlatformer extends Game {
 		// draw context menu
 		if (contextMenu.getVisible()) {
 
-			drawCommands.add(new DrawQuadCall(contextMenu.getGraphics(), null,
+			draw(new DrawQuadCall(contextMenu.getGraphics(), null,
 				null, new Quad(contextMenu.getShape()), -10, null));
 
 			for (Button b : contextMenu.getItems()) {
 
-				drawCommands.add(new DrawQuadCall(new Colour(0.5f, 0.5f, 0.5f,
+				draw(new DrawQuadCall(new Colour(0.5f, 0.5f, 0.5f,
 					1), null, null, new Quad(b.getShape()), -11, null));
 
-				drawCommands.addAll(Text.renderString(
+				drawAll(Text.renderString(
 					contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b)).name,
 					f, b.getShape().getPosition().add(new Vector2f(1, 1)), -12,
 					null).calls);
+				
 			}
 		}
 
 		// draw action menu
 		if (actionMenu.getVisible()) {
 
-			drawCommands.add(new DrawQuadCall(actionMenu.getGraphics(), null,
+			draw(new DrawQuadCall(actionMenu.getGraphics(), null,
 					null, new Quad(actionMenu.getShape()), -10, null));
 
 			for (Button b : actionMenu.getItems()) {
 
-				drawCommands.add(new DrawQuadCall(
+				draw(new DrawQuadCall(
 					new Colour(0.5f, 0.5f, 0.5f, 1), null, null,
 					new Quad(b.getShape()), -11, null));
 
-				drawCommands.addAll(Text.renderString(
+				drawAll(Text.renderString(
 					commands.get(actionMenu.getItems().indexOf(b)), f,
 					b.getShape().getPosition().add(new Vector2f(1, 1)),
 					-12, null).calls);
@@ -498,33 +467,9 @@ public class LWJGLPlatformer extends Game {
 		// debugging, draw alphabet
 
 		for (int i = 0; i < 3; i++) {
-			drawCommands.addAll(Text.renderString(console[i], f,
-					new Vector2f(2,f.characterHeight * i), -10,
-					new Colour(0, 0, 0, 1)).calls);
-		}
-
-		/* Sort and run calls */
-
-		Collections.sort(drawCommands, new Comparator<DrawQuadCall>() {
-			public int compare(DrawQuadCall a, DrawQuadCall b) {
-				if (a.getDepth() < b.getDepth())
-					return -1;
-				if (a.getDepth() > b.getDepth())
-					return 1;
-				return 0;
-			}
-		});
-		Collections.reverse(drawCommands);
-
-		for (DrawQuadCall dqc : drawCommands) {
-			if (dqc.getColour() != null) {
-				GL11.glColor4f(
-					dqc.getColour().getRed(),
-					dqc.getColour().getGreen(),
-					dqc.getColour().getBlue(),
-					dqc.getColour().getAlpha());
-			}
-			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad());
+			drawAll(Text.renderString(console[i], f,
+				new Vector2f(2,f.characterHeight * i), -10,
+				new Colour(0, 0, 0, 1)).calls);
 		}
 	}
 }

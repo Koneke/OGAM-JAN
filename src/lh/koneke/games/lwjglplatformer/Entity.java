@@ -24,6 +24,7 @@ public class Entity {
 	 */
 
 	String name;
+	String unique;
 	public Vector2f logicalPosition; //position in grid
 	public int depth;
 	private String look;
@@ -57,7 +58,15 @@ public class Entity {
 	public String getName() {
 		return name;
 	}
+	
+	public String getUnique() {
+		return unique;
+	}
 
+	public String getFullName() {
+		return name+":"+unique;
+	}
+	
 	public String getLook() {
 		return look;
 	}

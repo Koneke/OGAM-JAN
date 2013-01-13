@@ -1,8 +1,13 @@
 package lh.koneke.thomas.framework;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
 import lh.koneke.thomas.graphics.Colour;
+import lh.koneke.thomas.graphics.DrawQuadCall;
 import lh.koneke.thomas.graphics.DrawingObject;
 import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.Texture2d;
@@ -25,6 +30,8 @@ public class Game {
 	public static boolean verboseLogging = false;
 	
 	public Time t;
+	
+	List<DrawQuadCall> drawCommands;
 	
 	public void setDisplay(int w, int h) {
 		if (Display.isCreated()) Display.destroy();
@@ -137,9 +144,19 @@ public class Game {
 		System.exit(0);
 	}
 	
+	public void draw(DrawQuadCall call) {
+		drawCommands.add(call);
+	}
+	
+	public void drawAll(List<DrawQuadCall> calls) {
+		drawCommands.addAll(calls);
+	}
+	
 	private void preInitialize() {
 		setDisplay(800, 600);
 		t = new Time();
+		
+		drawCommands = new ArrayList<DrawQuadCall>();
 		
 		System.out.println("pre init OK");
 	}
@@ -176,9 +193,34 @@ public class Game {
 	
 	private void preDraw() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		drawCommands.clear();
 	}
 	public void draw() {} //to be overridden
-	private void postDraw() {}
+	private void postDraw() {
+		
+		Collections.sort(drawCommands, new Comparator<DrawQuadCall>() {
+			public int compare(DrawQuadCall a, DrawQuadCall b) {
+				if (a.getDepth() < b.getDepth())
+					return -1;
+				if (a.getDepth() > b.getDepth())
+					return 1;
+				return 0;
+			}
+		});
+		Collections.reverse(drawCommands);
+
+		for (DrawQuadCall dqc : drawCommands) {
+			if (dqc.getColour() != null) {
+				GL11.glColor4f(
+					dqc.getColour().getRed(),
+					dqc.getColour().getGreen(),
+					dqc.getColour().getBlue(),
+					dqc.getColour().getAlpha());
+			}
+			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad());
+		}
+		
+	}
 	
 	private void preUnload() {
 		System.out.println("pre unload OK");

@@ -21,6 +21,10 @@ public class Vector2f extends Vector {
 		return new Vector2f(this.x*xscalar, this.y*yscalar);
 	}
 	
+	public Vector2f scale(Vector2f scalar) {
+		return new Vector2f(this.x*scalar.x, this.y*scalar.y);
+	}
+	
 	public Vector2f subtract(Vector2f otherVector) {
 		return new Vector2f(this.x - otherVector.x, this.y - otherVector.y);
 	}
