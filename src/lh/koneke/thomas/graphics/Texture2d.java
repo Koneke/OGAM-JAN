@@ -32,11 +32,11 @@ public class Texture2d implements DrawingObject{
 		this.texture = texture;
 	}
 	
-	public Texture getTexture() {
-		return this.texture;
-	}
-	
 	public void setTexture(Texture texture) {
 		this.texture = texture;
+	}
+	
+	public String getPath() {
+		return path;
 	}
 }

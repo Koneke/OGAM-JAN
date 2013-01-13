@@ -37,6 +37,9 @@ public class Frame implements DrawingObject, FrameGenerator {
 	}
 	
 	public Rectangle getAt(Vector2f position, Vector2f size) {
+		if(texture == null) {
+			return new Rectangle(new Vector2f(0,0), new Vector2f(1,1));
+		}
 		Rectangle r = new Rectangle(
 				position,
 				size
@@ -89,5 +92,9 @@ public class Frame implements DrawingObject, FrameGenerator {
 	
 	public Rectangle getShape() {
 		return rectangle;
+	}
+	
+	public String getPath() {
+		return texturePath;
 	}
 }

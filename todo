@@ -9,8 +9,8 @@ Tilesheet into .thl
 Multitilesheet screens
 Mouse wheel clicking
 Partially invisible entity names (like an unique id at the end)
-Rework texture loading, a bit confusing (and probably dumb) right now
 Whether or not a keyboard key was down last frame
+Work on late texture loading
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)
@@ -34,3 +34,4 @@ Basic screen switching
 Removing entities
 Animation play count (can be used for one shots and stuff)
 Adding entities
+Rework texture loading, a bit confusing (and probably dumb) right now

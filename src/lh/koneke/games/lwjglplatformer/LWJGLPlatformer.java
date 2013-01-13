@@ -16,6 +16,7 @@ import lh.koneke.thomas.framework.Graphics;
 import lh.koneke.thomas.framework.Quad;
 import lh.koneke.thomas.framework.Rectangle;
 import lh.koneke.thomas.framework.SoundManager;
+import lh.koneke.thomas.framework.TextureManager;
 import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawQuadCall;
@@ -36,10 +37,9 @@ public class LWJGLPlatformer extends Game {
 
 	EntityManager em;
 	SoundManager sm;
-	TextureManager tm;
+
 	Vector2f playerTarget; // spot to move to
 
-	List<Frame> unloadedFrames;
 	Frame levelBackground;
 	Frame tileSheet;
 	Vector2f tileSize;
@@ -55,9 +55,6 @@ public class LWJGLPlatformer extends Game {
 	Entity selectedEntity;
 
 	boolean mouseFree = true;
-
-	//int hotswapFrequency = 1000; // time in ms for hotswap updating
-	//int hotswapTimer = 0;
 
 	Font f;
 
@@ -83,8 +80,6 @@ public class LWJGLPlatformer extends Game {
 		console[0] = "Thomas the Game Engine";
 		console[1] = "early alpha";
 		console[2] = "github.com/@F00FKoneke";
-
-		unloadedFrames = new ArrayList<Frame>();
 
 		contextMenu = new ContextMenu(new Vector2f(0, 0), 68);
 		contextMenu.setGraphics(new Colour(0.3f, 0.3f, 0.3f, 1));
@@ -115,10 +110,6 @@ public class LWJGLPlatformer extends Game {
 		levelBackground = new Frame(new Vector2f(0, 0), screenSize);
 		levelBackground.texturePath = "res/testbg2.png";
 
-		unloadedFrames.add(f.sheet);
-		unloadedFrames.add(tileSheet);
-		unloadedFrames.add(levelBackground);
-
 		firstScreen = new Screen(tileSheet);
 		firstScreen.load("res/screen.thl");
 		
@@ -143,21 +134,10 @@ public class LWJGLPlatformer extends Game {
 		// setup the graphics of loaded entities
 		for (Entity e : em.getEntities().values()) {
 			e.graphics = new Frame(null, tileSize);
-			//System.out.println("e loading " + e.texturePath);
-			//e.graphics.setTexture(new Texture2d(
-			//	Graphics.loadTexture(e.texturePath), e.texturePath));
 			
 			e.graphics.setTexture(tm.load(e.texturePath));
 			e.am.load(e.thaPath);
 			e.am.startAnimation("idle");
-		}
-
-		for (Frame f : unloadedFrames) {
-			/*f.setTexture(new Texture2d(
-				Graphics.loadTexture(f.texturePath),
-				f.texturePath));
-		*/
-			f.setTexture(tm.load(f.texturePath));
 		}
 	}
 
@@ -182,7 +162,7 @@ public class LWJGLPlatformer extends Game {
 		if (mouseFree) {
 			if (GameMouse.left) {
 				playerTarget.x = GameMouse.getPosition().scale(
-						1f/Graphics.scale).x;
+					1f/Graphics.scale).x;
 			} else {
 				// if the mouse is not free, set our current position as target
 				playerTarget.x =
@@ -422,21 +402,33 @@ public class LWJGLPlatformer extends Game {
 		for (int x = 0; x < currentScreen.map.length; x++) {
 			for (int y = 0; y < currentScreen.map[0].length; y++) {
 				for (Tile t : currentScreen.map[x][y].getTiles()) {
-					Vector2f v = t.tile;
-					Rectangle r = ((Frame) currentScreen.tileSheet).getAt(v,tileSize);
-
-					if (t.xflip)
-						r = r.xflip();
-					if (t.yflip)
-						r = r.yflip();
-
-					drawCommands.add(new DrawQuadCall(
-						((Frame) currentScreen.tileSheet), null, r,
-						new Quad(new Rectangle(
-							currentScreen.map[x][y].position.scale(
-								currentScreen.tileSize.x,
-								currentScreen.tileSize.y),
-							currentScreen.tileSize)), t.depth, null));
+					
+					Quad Q = new Quad(new Rectangle(
+						currentScreen.map[x][y].position.scale(
+							currentScreen.tileSize.x,
+							currentScreen.tileSize.y),
+						currentScreen.tileSize));
+					
+					if(tm.get(currentScreen.tileSheet.getPath())) {
+						Vector2f v = t.tile;
+						Rectangle r = ((Frame) currentScreen.tileSheet).getAt(v,tileSize);
+	
+						if (t.xflip)
+							r = r.xflip();
+						if (t.yflip)
+							r = r.yflip();
+	
+						drawCommands.add(new DrawQuadCall(
+							((Frame) currentScreen.tileSheet), null, r,
+							Q, t.depth, null));
+						
+					} else {
+						drawCommands.add(new DrawQuadCall(
+							new Colour(1,1,1,1), null, null,
+							Q, t.depth, null));
+						currentScreen.tileSheet = tm.load(tileSheet.texturePath);
+						//tm.loadLate(currentScreen.texturePath, currentScreen.tileSheet);
+					}
 				}
 			}
 		}

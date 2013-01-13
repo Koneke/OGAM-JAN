@@ -17,7 +17,7 @@ import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.TextureImpl;
 
 public class Game {
-	
+	protected TextureManager tm;
 	public int dt;
 	public Vector2f mousePosition;
 
@@ -64,6 +64,11 @@ public class Game {
 			if(!f.visible) {
 				return;
 			}
+			
+			if(f.getTexture() == null) {
+				f.setTexture(tm.load(f.getPath()));
+			}
+			
 			f.getTexture().Bind();
 			if(am != null) {
 				source = new Rectangle(f.getTexCoord(f.getTexture(), am));

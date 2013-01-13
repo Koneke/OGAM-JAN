@@ -58,4 +58,8 @@ public class Colour implements DrawingObject {
 	public void setAlpha(float f) {
 		this.a = f;
 	}
+
+	public String getPath() {
+		return null;
+	}
 }
