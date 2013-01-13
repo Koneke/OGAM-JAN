@@ -172,14 +172,10 @@ public class LWJGLPlatformer extends Game {
 		 * TODO: clean menu stuff
 		 */
 
+		AnimationManager.counting = true;
 		handleContextMenus();
 		
 		if(GameMouse.right && ! GameMouse.prevRight) {
-			try {
-				em.addNew("Binoculars");
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
 		}
 
 		if (mouseFree) {
@@ -203,10 +199,6 @@ public class LWJGLPlatformer extends Game {
 				em.switchScreen(firstScreen);
 				currentScreen = firstScreen;
 			}
-		}
-		
-		if(Keyboard.isKeyDown(Keyboard.KEY_S) && Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			em.removeEntity("Binoculars");
 		}
 
 		// if distance from player center to player target > 1px

@@ -31,3 +31,4 @@ Nontexture graphics for frame
 Frame.getShape
 Basic screen switching
 Removing entities
+Animation play count (can be used for one shots and stuff)

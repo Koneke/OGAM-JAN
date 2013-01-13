@@ -10,7 +10,6 @@ import java.util.Map;
 
 import lh.koneke.thomas.graphics.AnimationFrame;
 
-
 /*animation file
  * -name;
  * x,y time( sound);x,y time( sound);...
@@ -30,11 +29,18 @@ public class AnimationManager {
 	Vector2f frameSize = new Vector2f(32,32);
 	public static SoundManager sm;
 	
+	public int animationPlayCount;
+	public static boolean counting = false;
+	
 	public void startAnimation(String animation) {
 		currentAnimation = animation;
 		setCurrentFrames(animations.get(animation));
+		
+		animationPlayCount = -1;
+		
 		setCurrentFrame(-1);
 		advance();
+		
 		timer = 0;
 	}
 	
@@ -52,7 +58,12 @@ public class AnimationManager {
 	}
 	
 	void advance() {
+		if(currentFrames.size() == 0) return;
+		
 		setCurrentFrame((getCurrentFrame() + 1) % getCurrentFrames().size());
+		if(counting && getCurrentFrame() == 0) {
+			animationPlayCount += 1;
+		}
 		
 		String sound = currentFrames.get(getCurrentFrame()).getSound();
 		if(sound != null) {
