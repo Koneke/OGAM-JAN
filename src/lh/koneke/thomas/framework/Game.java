@@ -22,6 +22,7 @@ public class Game {
 	public Vector2f mousePosition;
 
 	public static Random random = new Random();
+	public static boolean verboseLogging = false;
 	
 	public Time t;
 	

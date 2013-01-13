@@ -20,8 +20,6 @@ import lh.koneke.thomas.framework.Vector2f;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawQuadCall;
 import lh.koneke.thomas.graphics.Frame;
-import lh.koneke.thomas.graphics.Texture2d;
-import lh.koneke.thomas.graphics.TextureInformation;
 import lh.koneke.thomas.gui.Button;
 import lh.koneke.thomas.gui.ContextMenu;
 import lh.koneke.thomas.gui.Text;
@@ -38,6 +36,7 @@ public class LWJGLPlatformer extends Game {
 
 	EntityManager em;
 	SoundManager sm;
+	TextureManager tm;
 	Vector2f playerTarget; // spot to move to
 
 	List<Frame> unloadedFrames;
@@ -57,8 +56,8 @@ public class LWJGLPlatformer extends Game {
 
 	boolean mouseFree = true;
 
-	int hotswapFrequency = 1000; // time in ms for hotswap updating
-	int hotswapTimer = 0;
+	//int hotswapFrequency = 1000; // time in ms for hotswap updating
+	//int hotswapTimer = 0;
 
 	Font f;
 
@@ -69,7 +68,7 @@ public class LWJGLPlatformer extends Game {
 	public void sysInit() {
 		screenSize = new Vector2f(320, 256);
 
-		Graphics.scale = 1f;
+		Graphics.scale = 3f;
 		setDisplay(
 			(int) (screenSize.x * Graphics.scale),
 			(int) (screenSize.y * Graphics.scale));
@@ -78,6 +77,7 @@ public class LWJGLPlatformer extends Game {
 
 	public void initialize() {
 		sysInit();
+		Game.verboseLogging = true;
 
 		console = new String[3];
 		console[0] = "Thomas the Game Engine";
@@ -99,7 +99,9 @@ public class LWJGLPlatformer extends Game {
 	}
 
 	public void load() {
-		Graphics.setInterpolationMode("none");
+		tm = new TextureManager();
+		tm.setInterpolationMode("none");
+		
 		tileSize = new Vector2f(32, 32);
 
 		f = new Font();
@@ -142,16 +144,20 @@ public class LWJGLPlatformer extends Game {
 		for (Entity e : em.getEntities().values()) {
 			e.graphics = new Frame(null, tileSize);
 			//System.out.println("e loading " + e.texturePath);
-			e.graphics.setTexture(new Texture2d(
-				Graphics.loadTexture(e.texturePath), e.texturePath));
+			//e.graphics.setTexture(new Texture2d(
+			//	Graphics.loadTexture(e.texturePath), e.texturePath));
+			
+			e.graphics.setTexture(tm.load(e.texturePath));
 			e.am.load(e.thaPath);
 			e.am.startAnimation("idle");
 		}
 
 		for (Frame f : unloadedFrames) {
-			f.setTexture(new Texture2d(
+			/*f.setTexture(new Texture2d(
 				Graphics.loadTexture(f.texturePath),
 				f.texturePath));
+		*/
+			f.setTexture(tm.load(f.texturePath));
 		}
 	}
 
@@ -245,23 +251,7 @@ public class LWJGLPlatformer extends Game {
 			e.lifetime += dt;
 		}
 
-		hotswapTimer += dt;
-		if (hotswapTimer > hotswapFrequency) {
-			while (hotswapTimer > hotswapFrequency) {
-				hotswapTimer -= hotswapFrequency;
-			}
-
-			for (TextureInformation ti : Texture2d.information) {
-				ti.checkHotswap();
-			}
-
-			levelBackground.getTexture().checkHotswap();
-			tileSheet.getTexture().checkHotswap();
-			f.sheet.getTexture().checkHotswap();
-
-			// TODO: replace these three lines with looping through loaded tex
-			// instead
-		}
+		tm.updateHotswapTimer(dt);
 	}
 
 	private void handleContextMenus() {
