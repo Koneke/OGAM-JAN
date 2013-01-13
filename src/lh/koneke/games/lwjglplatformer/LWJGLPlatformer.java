@@ -173,6 +173,14 @@ public class LWJGLPlatformer extends Game {
 		 */
 
 		handleContextMenus();
+		
+		if(GameMouse.right && ! GameMouse.prevRight) {
+			try {
+				em.addNew("Binoculars");
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
 
 		if (mouseFree) {
 			if (GameMouse.left) {
@@ -186,15 +194,19 @@ public class LWJGLPlatformer extends Game {
 		}
 		
 		if (currentScreen == firstScreen) {
-			if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
 				em.switchScreen(testScreen);
 				currentScreen = testScreen;
 			}
 		} else {
-			if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			if(Keyboard.isKeyDown(Keyboard.KEY_E)) {
 				em.switchScreen(firstScreen);
 				currentScreen = firstScreen;
 			}
+		}
+		
+		if(Keyboard.isKeyDown(Keyboard.KEY_S) && Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			em.removeEntity("Binoculars");
 		}
 
 		// if distance from player center to player target > 1px
@@ -480,25 +492,25 @@ public class LWJGLPlatformer extends Game {
 
 		for (Entity e : em.getEntities().values()) {
 			drawCommands.add(new DrawQuadCall(e.graphics, e.am,
-					e.graphics.getTexCoord(e.graphics.getTexture(), e.am), e.quad,
-					e.depth, null));
+				e.graphics.getTexCoord(e.graphics.getTexture(), e.am), e.quad,
+				e.depth, null));
 		}
 		
 		// draw context menu
 		if (contextMenu.getVisible()) {
 
 			drawCommands.add(new DrawQuadCall(contextMenu.getGraphics(), null,
-					null, new Quad(contextMenu.getShape()), -10, null));
+				null, new Quad(contextMenu.getShape()), -10, null));
 
 			for (Button b : contextMenu.getItems()) {
 
 				drawCommands.add(new DrawQuadCall(new Colour(0.5f, 0.5f, 0.5f,
-						1), null, null, new Quad(b.getShape()), -11, null));
+					1), null, null, new Quad(b.getShape()), -11, null));
 
 				drawCommands.addAll(Text.renderString(
-						contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b)).name,
-						f, b.getShape().getPosition().add(new Vector2f(1, 1)), -12,
-						null).calls);
+					contextMenu.tile.entities.get(contextMenu.getItems().indexOf(b)).name,
+					f, b.getShape().getPosition().add(new Vector2f(1, 1)), -12,
+					null).calls);
 			}
 		}
 

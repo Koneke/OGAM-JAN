@@ -34,6 +34,21 @@ public class Entity {
 		this.name = name;
 		am = new AnimationManager();
 	}
+	
+	public Entity(Entity e) {
+		this.quad = e.quad;
+		this.graphics = e.graphics;
+		this.am = e.am;
+		this.currentFrame = e.currentFrame;
+		this.currentTileSlot = e.currentTileSlot;
+		this.lifetime = e.lifetime;
+		this.name = e.getName();
+		this.logicalPosition = e.logicalPosition;
+		this.depth = e.depth;
+		this.size = e.size;
+		this.texturePath = e.texturePath;
+		this.thaPath = e.thaPath;
+	}
 
 	public String getName() {
 		return name;
