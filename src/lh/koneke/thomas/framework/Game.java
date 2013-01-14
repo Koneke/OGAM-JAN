@@ -109,6 +109,23 @@ public class Game {
 		GL11.glColor4f(1,1,1,1);
 	}
 	
+	public void drawLine(Vector2f a, Vector2f b, Integer w, Colour c) {
+		//not working yet
+		if(w != null) {
+			GL11.glLineWidth(w);
+		} else {
+			GL11.glLineWidth(1);
+		}
+		if(c != null) {
+			GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
+		}
+		
+		GL11.glBegin(GL11.GL_LINES);
+		GL11.glVertex2f(a.x, a.y);
+		GL11.glVertex2f(b.x, b.y);
+		GL11.glEnd();
+	}
+	
 	public void start() {
 		preInitialize();
 		initialize();
@@ -219,7 +236,6 @@ public class Game {
 			}
 			drawQuad(dqc.getGraphics(), dqc.getAm(), dqc.getSource(), dqc.getQuad());
 		}
-		
 	}
 	
 	private void preUnload() {

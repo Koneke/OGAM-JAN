@@ -3,34 +3,27 @@ package lh.koneke.thomas.framework;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-import lh.koneke.thomas.graphics.Colour;
-import lh.koneke.thomas.graphics.DrawingObject;
-import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.Texture2d;
 
 public class TextureManager {
 	Map<String, Texture2d> textures;
 	Map<String, Long> textureLoadTime;
-	Queue<String> unloadedTextures;
 	
 	String interpolationMode = "none";
 	
 	int hotswapFrequency = 5000;
-	int hotswapTimer;
+	int hotswapTimer = 0;
 	
 	public TextureManager() {
 		textures = new HashMap<String, Texture2d>();
 		textureLoadTime = new HashMap<String, Long>();
-		unloadedTextures = new LinkedList<String>();
 	}
 	
 	public void setInterpolationMode(String mode) {
@@ -38,25 +31,10 @@ public class TextureManager {
 		System.out.println("Interpolation mode set to "+interpolationMode);
 	}
 	
-	public void loadLate(String path, DrawingObject d) {
-		Texture2d texture = null;
-		if(d instanceof Colour) {
-			return;}
-		if(d instanceof Texture2d) {
-			texture = (Texture2d)d;
-		}
-		if(d instanceof Frame) {
-			Frame f = (Frame)d;
-			texture = f.getTexture();
-		}
-		texture.setTexture(loadTexture(path));
-		textures.put(path, texture);
+	public void setHotswapFrequency(int frequency) {
+		this.hotswapFrequency = frequency;
 	}
-	
-	public boolean queued(String path) {
-		return unloadedTextures.contains(path);
-	}
-	
+
 	public Texture2d load(String path) {
 		//loads if not loaded, returns otherwise
 		

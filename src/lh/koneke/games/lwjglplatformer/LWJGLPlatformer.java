@@ -471,5 +471,6 @@ public class LWJGLPlatformer extends Game {
 				new Vector2f(2,f.characterHeight * i), -10,
 				new Colour(0, 0, 0, 1)).calls);
 		}
+		
 	}
 }

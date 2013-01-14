@@ -21,13 +21,14 @@ import lh.koneke.thomas.graphics.AnimationFrame;
  */
 
 public class AnimationManager {
+	public static SoundManager sm;
+	
 	Map<String, List<AnimationFrame>> animations = new HashMap<String, List<AnimationFrame>>();
 	String currentAnimation;
 	private List<AnimationFrame> currentFrames;
 	private int currentFrame;
 	int timer; //ms passed
 	Vector2f frameSize = new Vector2f(32,32);
-	public static SoundManager sm;
 	
 	public int animationPlayCount;
 	public static boolean counting = false;
