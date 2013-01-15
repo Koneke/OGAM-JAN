@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 
 /* Class representing one grid slot, holding the tiles to be drawn there. */
 

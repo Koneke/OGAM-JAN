@@ -1,19 +1,19 @@
-:Player
+:0;Player
 bugger off eh
 0,5,0,1,1
 res/testsheet.png
 res/player.tha
-:Binoculars
+:1;Binoculars
 Could be handy
 6,3,-1,1,1
 res/testsheet2.png
 res/binoculars.tha
-:Bob
+:2;Bob
 Bob smells funny, you can tell by the stink lines
 6,3,-2,1,1
 res/coolboll.png
 res/bob.tha
-:Ladder
+:3;Ladder
 It is a ladder
 6,4,1,1,2
 res/testsheet2.png

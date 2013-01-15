@@ -1,8 +1,8 @@
 package lh.koneke.thomas.graphics;
 
 import lh.koneke.thomas.framework.AnimationManager;
-import lh.koneke.thomas.framework.Rectangle;
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Rectangle;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 
 public class Frame implements DrawingObject, FrameGenerator {
 	//public Vector2f frame;

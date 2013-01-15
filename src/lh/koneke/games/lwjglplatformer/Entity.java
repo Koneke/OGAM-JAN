@@ -2,8 +2,8 @@ package lh.koneke.games.lwjglplatformer;
 
 import lh.koneke.thomas.framework.AnimationManager;
 import lh.koneke.thomas.framework.Game;
-import lh.koneke.thomas.framework.Quad;
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Quad;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 import lh.koneke.thomas.graphics.Frame;
 
 public class Entity {
@@ -24,6 +24,7 @@ public class Entity {
 	 */
 
 	String name;
+	int id;
 	String unique;
 	public Vector2f logicalPosition; //position in grid
 	public int depth;

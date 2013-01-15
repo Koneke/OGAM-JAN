@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lh.koneke.thomas.framework.Game;
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 import lh.koneke.thomas.graphics.DrawingObject;
 import lh.koneke.thomas.graphics.Frame;
 

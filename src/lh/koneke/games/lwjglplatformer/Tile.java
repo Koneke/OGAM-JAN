@@ -1,6 +1,6 @@
 package lh.koneke.games.lwjglplatformer;
 
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 
 public class Tile {
 	public int depth;

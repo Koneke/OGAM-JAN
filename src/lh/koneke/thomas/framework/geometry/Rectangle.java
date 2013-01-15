@@ -1,4 +1,6 @@
-package lh.koneke.thomas.framework;
+package lh.koneke.thomas.framework.geometry;
+
+import lh.koneke.thomas.framework.Shape;
 
 
 public class Rectangle implements Shape {
@@ -45,6 +47,20 @@ public class Rectangle implements Shape {
 		r.y = r.y*yscale;
 		r.w = r.w*xscale;
 		r.h = r.h*yscale;
+		return r;
+	}
+	
+	public Rectangle add(float w, float h) {
+		Rectangle r = new Rectangle(this);
+		r.w += w;
+		r.h += h;
+		return r;
+	}
+	
+	public Rectangle offset(int x, int y) {
+		Rectangle r = new Rectangle(this);
+		r.x -= x;
+		r.y -= y;
 		return r;
 	}
 	

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lh.koneke.thomas.framework.geometry.Rectangle;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 import lh.koneke.thomas.graphics.AnimationFrame;
 
 /*animation file

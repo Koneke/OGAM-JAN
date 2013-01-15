@@ -1,6 +1,6 @@
 package lh.koneke.thomas.gui;
 
-import lh.koneke.thomas.framework.Rectangle;
+import lh.koneke.thomas.framework.geometry.Rectangle;
 import lh.koneke.thomas.graphics.DrawingObject;
 
 public class Button extends GuiBase {

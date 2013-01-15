@@ -1,7 +1,7 @@
 package lh.koneke.thomas.graphics;
 
 import lh.koneke.thomas.framework.AnimationManager;
-import lh.koneke.thomas.framework.Rectangle;
+import lh.koneke.thomas.framework.geometry.Rectangle;
 
 public interface FrameGenerator {
 	public Rectangle getTexCoord(Texture2d texture, AnimationManager am);

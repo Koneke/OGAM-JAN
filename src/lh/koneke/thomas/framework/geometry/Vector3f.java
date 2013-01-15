@@ -1,4 +1,4 @@
-package lh.koneke.thomas.framework;
+package lh.koneke.thomas.framework.geometry;
 
 public class Vector3f extends Vector {
 	public float x, y, z;

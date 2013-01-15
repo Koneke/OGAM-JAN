@@ -6,6 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import lh.koneke.thomas.framework.geometry.Quad;
+import lh.koneke.thomas.framework.geometry.Rectangle;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawQuadCall;
 import lh.koneke.thomas.graphics.DrawingObject;
@@ -13,6 +16,7 @@ import lh.koneke.thomas.graphics.Frame;
 import lh.koneke.thomas.graphics.Texture2d;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
@@ -22,9 +26,12 @@ import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.TextureImpl;
 
 public class Game {
+	boolean running;
+	
 	protected TextureManager tm;
 	public int dt;
 	public Vector2f mousePosition;
+	public boolean[] prevKeyboard;
 
 	public static Random random = new Random();
 	public static boolean verboseLogging = false;
@@ -32,6 +39,10 @@ public class Game {
 	public Time t;
 	
 	List<DrawQuadCall> drawCommands;
+	
+	public void close() {
+		running = false;
+	}
 	
 	public void setDisplay(int w, int h) {
 		if (Display.isCreated()) Display.destroy();
@@ -116,6 +127,7 @@ public class Game {
 		} else {
 			GL11.glLineWidth(1);
 		}
+		
 		if(c != null) {
 			GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
 		}
@@ -135,7 +147,7 @@ public class Game {
 		load();
 		postLoad();
 		
-		while(!Display.isCloseRequested()) {
+		while(!Display.isCloseRequested() && running) {
 			preUpdate();
 			update();
 			postUpdate();
@@ -171,7 +183,15 @@ public class Game {
 	
 	private void preInitialize() {
 		setDisplay(800, 600);
+		running = true;
+		
+		prevKeyboard = new boolean[Keyboard.getKeyCount()];
+		for(int x = 0; x < prevKeyboard.length; x++) {
+			prevKeyboard[x] = false;
+		}
+		
 		t = new Time();
+		tm = new TextureManager();
 		
 		drawCommands = new ArrayList<DrawQuadCall>();
 		
@@ -204,6 +224,11 @@ public class Game {
 		GameMouse.prevLeft = GameMouse.left;
 		GameMouse.prevRight = GameMouse.right;
 		GameMouse.prevWheel = GameMouse.wheel;
+	
+		for(int x = 0; x < prevKeyboard.length; x++) {
+			prevKeyboard[x] = Keyboard.isKeyDown(x);
+		}
+		
 		Display.update();
 		SoundStore.get().poll(0);
 	}

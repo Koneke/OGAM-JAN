@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lh.koneke.thomas.framework.Game;
-import lh.koneke.thomas.framework.Quad;
-import lh.koneke.thomas.framework.Rectangle;
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Quad;
+import lh.koneke.thomas.framework.geometry.Rectangle;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 
 
 /* entity
@@ -41,15 +41,19 @@ public class EntityManager {
 			br = new BufferedReader(new FileReader(path));
 			String name;
 			String prototype = "";
-			int x, y, z, w, h;
+			int x, y, z, w, h, id;
 			Entity currentEntity = null;
 			
 			String s;
 			int line = 0;
 			while((s = br.readLine()) != null) {
 				if(s.substring(0,1).equals(":")) {
-					name = s.substring(1, s.length());
+					String[] idnames = s.split(";");
+					id = Integer.parseInt(idnames[0].substring(1,idnames[0].length()));
+					//name = s.substring(1, s.length());
+					name = idnames[1];
 					currentEntity = new Entity(name);
+					currentEntity.id = id;
 					line = 1;
 					prototype = "";
 				}

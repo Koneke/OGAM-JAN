@@ -1,5 +1,7 @@
 package lh.koneke.thomas.framework;
 
+import lh.koneke.thomas.framework.geometry.Vector2f;
+
 
 public class GameMouse {
 	static Vector2f position = new Vector2f(0,0);

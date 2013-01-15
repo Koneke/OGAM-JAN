@@ -1,8 +1,8 @@
 package lh.koneke.thomas.graphics;
 
 import lh.koneke.thomas.framework.AnimationManager;
-import lh.koneke.thomas.framework.Quad;
-import lh.koneke.thomas.framework.Rectangle;
+import lh.koneke.thomas.framework.geometry.Quad;
+import lh.koneke.thomas.framework.geometry.Rectangle;
 
 public class DrawQuadCall {
 	private DrawingObject graphics;

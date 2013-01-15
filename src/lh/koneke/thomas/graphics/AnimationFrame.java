@@ -1,6 +1,6 @@
 package lh.koneke.thomas.graphics;
 
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 
 public class AnimationFrame {
 	private Vector2f frame;

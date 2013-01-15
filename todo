@@ -1,17 +1,16 @@
 Todo:
 Implement already designed screen editor
 Drawing tiled quads (like, if we want to fill a large area with the same tile, minimize the amount of draw calls)
-Save TextDrawCalls from renderString in Text object, and only render if none is saved
 Render to texture (e.g. like parts of the screen we know won't change)
-Map class relations and usage for structure overview, clean up, merge etc.
 Clean up context menus
 Sound panning
 Tilesheet into .thl
 Multitilesheet screens
-Whether or not a keyboard key was down last frame
 
 WIP:
 Partially invisible entity names (like an unique id at the end)
+Map class relations and usage for structure overview, clean up, merge etc.
+Save TextDrawCalls from renderString in Text object, and only render if none is saved
 
 Done:
 Switch to new text rendering in the context menus (remove the textSheet)
@@ -38,3 +37,4 @@ Adding entities
 Rework texture loading, a bit confusing (and probably dumb) right now
 Work on late texture loading
 Mouse wheel clicking
+Whether or not a keyboard key was down last frame

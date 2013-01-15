@@ -1,6 +1,6 @@
 package lh.koneke.thomas.graphics;
 
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 
 import org.newdawn.slick.opengl.Texture;
 

@@ -1,7 +1,7 @@
 package lh.koneke.thomas.gui;
 
-import lh.koneke.thomas.framework.Quad;
-import lh.koneke.thomas.framework.Rectangle;
+import lh.koneke.thomas.framework.geometry.Quad;
+import lh.koneke.thomas.framework.geometry.Rectangle;
 import lh.koneke.thomas.graphics.DrawQuadCall;
 import lh.koneke.thomas.graphics.DrawingObject;
 

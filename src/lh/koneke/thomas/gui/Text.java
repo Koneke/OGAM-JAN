@@ -2,18 +2,25 @@ package lh.koneke.thomas.gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 
 import lh.koneke.thomas.framework.Font;
-import lh.koneke.thomas.framework.Quad;
-import lh.koneke.thomas.framework.Rectangle;
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Quad;
+import lh.koneke.thomas.framework.geometry.Rectangle;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 import lh.koneke.thomas.graphics.Colour;
 import lh.koneke.thomas.graphics.DrawQuadCall;
 
 public class Text {
+	static Queue<String> renderedStrings
+		= new LinkedList<String>();
+	static Map<String, TextDrawCalls> renderedStringsMap
+		= new HashMap<String, TextDrawCalls>();;
+	
 	String string;
 	List<DrawQuadCall> graphics; //save drawn text in here in the future
 	
@@ -22,6 +29,14 @@ public class Text {
 	}
 	
 	public static TextDrawCalls renderString(String string, Font font, Vector2f position,/* float scale,*/ int depth, Colour C) {
+		
+		if(renderedStrings.contains(string)) {
+			renderedStrings.remove(string);
+			renderedStrings.add(string); //move it back
+			//return renderedStringsMap.get(string);
+			//doesn't work, why?
+		}
+		
 		TextDrawCalls tdc = new TextDrawCalls();
 		List<DrawQuadCall> calls = new ArrayList<DrawQuadCall>();
 		
@@ -119,6 +134,15 @@ public class Text {
 		}
 		tdc.size = new Vector2f(w, font.characterHeight);
 		tdc.calls = calls;
+
+		renderedStrings.add(string);
+		renderedStringsMap.put(string, tdc);
+		
+		if(renderedStrings.size() >= 20) {
+			String s = renderedStrings.poll();
+			renderedStringsMap.remove(s); //remove eldest
+		}
+		
 		return tdc;
 	}
 }

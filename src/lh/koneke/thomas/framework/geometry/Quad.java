@@ -1,4 +1,6 @@
-package lh.koneke.thomas.framework;
+package lh.koneke.thomas.framework.geometry;
+
+import lh.koneke.thomas.framework.Shape;
 
 
 public class Quad implements Shape {

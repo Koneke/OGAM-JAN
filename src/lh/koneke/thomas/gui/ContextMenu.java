@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lh.koneke.games.lwjglplatformer.TileSlot;
-import lh.koneke.thomas.framework.Rectangle;
-import lh.koneke.thomas.framework.Vector2f;
+import lh.koneke.thomas.framework.geometry.Rectangle;
+import lh.koneke.thomas.framework.geometry.Vector2f;
 
 public class ContextMenu extends GuiBase {
 	List<Button> content;
